@@ -10,7 +10,7 @@ public class World {
     List<People> people;
     List<Place> places;
     List<Item> items;
-    Map<People, Relation> relations;
+    Map<People, List<Relation>> relations;
     Map<People, Map<Place, Integer>> reputations;
 
     public void create() {
@@ -80,5 +80,17 @@ public class World {
             }
         }
         return nearest;
+    }
+
+    public void updateRelation(People from, People to, RelationType relationType, int diff, Item item, People thirdParty) {
+        List<Relation> relations = this.relations.get(from);
+        for(Relation r: relations) {
+            if (r.type == relationType) {
+                r.intensity += diff;
+                return;
+            }
+        }
+        // not found
+        relations.add(new Relation(from, to, relationType, diff, item, thirdParty));
     }
 }

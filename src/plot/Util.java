@@ -30,7 +30,7 @@ public class Util {
 
     public static boolean testStat(int score) {
         if (score <= 0 ){
-            return false;
+            return Math.random() < 0.05; // 5% min
         } else {
             // scores up to 9 are too good, always 90% chance
             return Math.random() * 10 < Math.min(9, score);

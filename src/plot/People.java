@@ -40,6 +40,7 @@ public class People extends Entity {
     public int lust;
     public int ambitious;
     public int creative;
+    public int vengeful;
 
     // Goals
     public List<Goal> goals = new LinkedList<>();
@@ -56,6 +57,7 @@ public class People extends Entity {
     public List<People> knownPeople = new LinkedList<>();
     public List<People> knownPeopleWithLocation = new LinkedList<>();
     public List<Place> knownPlaces = new LinkedList<>();
+
 
 
     public People(final String name) {
