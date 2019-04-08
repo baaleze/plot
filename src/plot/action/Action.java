@@ -3,7 +3,9 @@ package plot.action;
 import plot.*;
 import plot.goal.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class Action {
 
@@ -43,7 +45,11 @@ public abstract class Action {
                     break;
                 } else {
                     // sell item to the place we live
-                    return Optional.of(new SellItem(Util.randomIn(me.items)));
+                    if (target != null && target instanceof Item) {
+                        return Optional.of(new SellItem((Item) target));
+                    } else {
+                        return Optional.of(new SellItem(Util.randomIn(me.items)));
+                    }
                 }
             case CRAFT_ITEM:
                 // check wealth
@@ -59,6 +65,10 @@ public abstract class Action {
             case MOVE_TO_CITY:
                 Place start = world.whereIs(me);
                 Place finish = (Place) target;
+                if (finish == null) {
+                    // find a city to move to, nearest one
+                    finish = world.getNearestPlace(world.whereIs(me));
+                }
                 if (me.wealth > world.dist(start, finish) * World.COST_TO_TRAVEL) {
                     // enough money
                     return Optional.of(new Move(start, finish));
@@ -71,6 +81,58 @@ public abstract class Action {
                     return Optional.empty();
                 }
             case MUG:
+                if (!(target instanceof People)) {
+                    // find a target
+                    Place myPlace = world.whereIs(me);
+                    List<People> knownResidents = myPlace.residents.stream().filter(p -> me.knownPeopleWithLocation.contains(p)).collect(Collectors.toList());
+                    People p = Util.randomIn(knownResidents);
+                    if (p == null) {
+                        // no one is here mug the city
+                        return Optional.of(new StealViolentlyPlace(myPlace));
+                    } else {
+                        return Optional.of(new Mug(p));
+                    }
+                } else {
+                    People toMug = (People) target;
+                    if (me.knownPeopleWithLocation.contains(toMug)) {
+                        // ok I know him
+                        return Optional.of(new Mug(toMug));
+                    } else {
+                        // find him
+                        GetInfo g = new GetInfo(InfoType.PEOPLE_LOCATION, toMug);
+                        sourceGoal.prerequisites.add(g);
+                        me.goals.add(g);
+                        return Optional.empty();
+                    }
+                }
+            case KILL:
+                if (!(target instanceof People)) {
+                    // find a target
+                    Place myPlace = world.whereIs(me);
+                    List<People> knownResidents = myPlace.residents.stream().filter(p -> me.knownPeopleWithLocation.contains(p)).collect(Collectors.toList());
+                    People p = Util.randomIn(knownResidents);
+                    if (p == null) {
+                        // no one to kill move else where at random
+                        Travel g = new Travel(null);
+                        sourceGoal.prerequisites.add(g);
+                        me.goals.add(g);
+                        return Optional.empty();
+                    } else {
+                        return Optional.of(new Kill(p));
+                    }
+                } else {
+                    People toMug = (People) target;
+                    if (me.knownPeopleWithLocation.contains(toMug)) {
+                        // ok I know him
+                        return Optional.of(new Kill(toMug));
+                    } else {
+                        // find him
+                        GetInfo g = new GetInfo(InfoType.PEOPLE_LOCATION, toMug);
+                        sourceGoal.prerequisites.add(g);
+                        me.goals.add(g);
+                        return Optional.empty();
+                    }
+                }
         }
         return Optional.empty();
     }

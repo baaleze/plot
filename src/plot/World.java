@@ -68,4 +68,17 @@ public class World {
         return null;
     }
 
+    public Place getNearestPlace(Place start) {
+        Place nearest = null;
+        int dist = Integer.MAX_VALUE;
+
+        for(Place p : places) {
+            int d = dist(start, p);
+            if (d < dist) {
+                nearest = p;
+                dist = d;
+            }
+        }
+        return nearest;
+    }
 }
