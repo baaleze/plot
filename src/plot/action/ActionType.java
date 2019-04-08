@@ -6,9 +6,10 @@ public enum ActionType {
     HIRE_THIEF,
     MOVE_TO_CITY,
     PROPOSE_TO,
-    STEAL,
     STEAL_PLACE,
     STEAL_ITEM,
+    MUG,
+    STEAL_VIOLENTLY_PLACE,
     CRAFT_ITEM,
     TRADE,
     BUY_ITEM,
@@ -17,9 +18,6 @@ public enum ActionType {
     CORRUPT_PLACE,
     HAVE_KID,
     HIDE,
-    TRACK_ITEM,
-    TRACK_SOMEBODY,
-    PRODUCE_GOODS,
     GO_TO_DUNGEON,
     GO_TO_TOMB,
     STUDY_MAGIC,
@@ -27,6 +25,5 @@ public enum ActionType {
     RECRUIT_ACCOMPLICE,
     POSTULATE_TO_PATRON,
     SELL_ITEM,
-    SELL_PRODUCE,
     GET_INFO
 }

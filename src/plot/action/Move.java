@@ -15,6 +15,7 @@ public class Move extends Action {
     public Move(final Place start, final Place target) {
         this.start = start;
         this.target = target;
+        this.type = ActionType.MOVE_TO_CITY;
     }
 
     @Override

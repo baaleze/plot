@@ -16,5 +16,6 @@ public enum GoalType {
     MARRY_SOMEBODY,
     HAVE_KIDS,
     CRAFT_ITEM,
-    TRAVEL_TO
+    TRAVEL_TO,
+    GET_INFO
 }

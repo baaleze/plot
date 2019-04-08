@@ -6,9 +6,11 @@ import plot.action.Action;
 
 import java.util.Optional;
 
-public class Negociation<Target> extends Goal {
+public class GetItem extends Goal {
 
-    public Target target;
+    public GetItem() {
+        this.type = GoalType.GET_ITEM;
+    }
 
     @Override
     public Optional<? extends Action> generateAction(World world, People me) {

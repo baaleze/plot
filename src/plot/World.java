@@ -41,9 +41,27 @@ public class World {
         return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
     }
 
+    public People whoHas(Item i) {
+        for(People p: this.people) {
+            if (p.items.contains(i)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public Place whereIs(final People p) {
         for (final Place place : this.places) {
             if (place.livesHere(p)) {
+                return place;
+            }
+        }
+        return null;
+    }
+
+    public Place whereIs(final Item i) {
+        for (Place place: this.places) {
+            if (place.items.containsKey(i)) {
                 return place;
             }
         }
