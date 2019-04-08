@@ -25,5 +25,5 @@ public enum ActionType {
     RECRUIT_ACCOMPLICE,
     POSTULATE_TO_PATRON,
     SELL_ITEM,
-    GET_INFO
+    LISTEN
 }

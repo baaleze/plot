@@ -36,12 +36,16 @@ public abstract class Action {
                 return acquireItem(me, world, AcquisitionType.STEAL, target,  sourceGoal);
             case BUY_ITEM:
                 return acquireItem(me, world, AcquisitionType.BUY, target, sourceGoal);
+            case TRADE:
+                // you can always trade
+                return Optional.of(new Trade());
+            case LISTEN:
+                // you can always get info
+                return Optional.of(new Listen());
             case SELL_ITEM:
                 if (me.items.isEmpty()) {
                     // no items!
-                    GetItem g = new GetItem();
-                    sourceGoal.prerequisites.add(g);
-                    me.goals.add(g);
+                    me.newGoal(new GetItem(), sourceGoal);
                     break;
                 } else {
                     // sell item to the place we live
@@ -57,9 +61,7 @@ public abstract class Action {
                     // ok
                     return Optional.of(new CraftItem(me.craft, me.wealth));
                 } else {
-                    GetRich g = new GetRich(me.greedy, me.wealth);
-                    sourceGoal.prerequisites.add(g);
-                    me.goals.add(g);
+                    me.newGoal(new GetRich(me.greedy, me.wealth), sourceGoal);
                     break;
                 }
             case MOVE_TO_CITY:
@@ -74,10 +76,7 @@ public abstract class Action {
                     return Optional.of(new Move(start, finish));
                 } else {
                     // not enough, need to get rich
-                    GetRich g = new GetRich(me.greedy, me.wealth);
-                    me.goals.add(g);
-                    // add as prerequisite to this goal
-                    sourceGoal.prerequisites.add(g);
+                    me.newGoal(new GetRich(me.greedy, me.wealth), sourceGoal);
                     return Optional.empty();
                 }
             case MUG:
@@ -99,9 +98,7 @@ public abstract class Action {
                         return Optional.of(new Mug(toMug));
                     } else {
                         // find him
-                        GetInfo g = new GetInfo(InfoType.PEOPLE_LOCATION, toMug);
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new GetInfo(toMug), sourceGoal);
                         return Optional.empty();
                     }
                 }
@@ -113,9 +110,7 @@ public abstract class Action {
                     People p = Util.randomIn(knownResidents);
                     if (p == null) {
                         // no one to kill move else where at random
-                        Travel g = new Travel(null);
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new Travel(null), sourceGoal);
                         return Optional.empty();
                     } else {
                         return Optional.of(new Kill(p));
@@ -127,9 +122,7 @@ public abstract class Action {
                         return Optional.of(new Kill(toMug));
                     } else {
                         // find him
-                        GetInfo g = new GetInfo(InfoType.PEOPLE_LOCATION, toMug);
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new GetInfo(toMug), sourceGoal);
                         return Optional.empty();
                     }
                 }
@@ -152,9 +145,7 @@ public abstract class Action {
                                 new StealItem(item, myPlace, null) :
                                 new BuyItem(item, myPlace, null));
                     } else {
-                        Travel g = new Travel(itemPlace);
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new Travel(itemPlace), sourceGoal);
                         return Optional.empty();
                     }
                 } else  {
@@ -166,32 +157,24 @@ public abstract class Action {
                                     new BuyItem(item, null, owner));
                         } else {
                             // new goal, go there !
-                            Travel g = new Travel(world.whereIs(owner));
-                            sourceGoal.prerequisites.add(g);
-                            me.goals.add(g);
+                            me.newGoal(new Travel(world.whereIs(owner)),sourceGoal);
                             return Optional.empty();
                         }
                     } else {
                         // find him
-                        GetInfo g = new GetInfo(InfoType.PEOPLE_LOCATION, owner);
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new GetInfo(owner),sourceGoal);
                         return Optional.empty();
                     }
                 }
             } else {
                 // find it
-                GetInfo g = new GetInfo(InfoType.ITEM_LOCATION, null);
-                sourceGoal.prerequisites.add(g);
-                me.goals.add(g);
+                me.newGoal(new GetInfo(null), sourceGoal);
                 return Optional.empty();
             }
         } else {
             // determine target
             if (me.knownItems.isEmpty()) {// no
-                GetInfo g = new GetInfo(InfoType.ITEM_INFO, null);
-                sourceGoal.prerequisites.add(g);
-                me.goals.add(g);
+                me.newGoal(new GetInfo(null), sourceGoal);
                 return Optional.empty();
             } else {// yes
                 Place myPlace = world.whereIs(me);
@@ -219,23 +202,17 @@ public abstract class Action {
                 People owner = world.whoHas(i);
                 if (itemPlace != null) {
                     // new goal, go there !
-                    Travel g = new Travel(itemPlace);
-                    sourceGoal.prerequisites.add(g);
-                    me.goals.add(g);
+                    me.newGoal(new Travel(itemPlace), sourceGoal);
                     return Optional.empty();
                 }
                 if (owner != null) {
                     if (me.knownPeopleWithLocation.contains(owner)) {
                         // new goal, go there !
-                        Travel g = new Travel(world.whereIs(owner));
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new Travel(world.whereIs(owner)), sourceGoal);
                         return Optional.empty();
                     } else {
                         // find him
-                        GetInfo g = new GetInfo(InfoType.PEOPLE_LOCATION, owner);
-                        sourceGoal.prerequisites.add(g);
-                        me.goals.add(g);
+                        me.newGoal(new GetInfo(owner), sourceGoal);
                         return Optional.empty();
                     }
                 } // else should not happen

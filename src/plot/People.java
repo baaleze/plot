@@ -1,6 +1,7 @@
 package plot;
 
 import plot.action.Action;
+import plot.goal.GetItem;
 import plot.goal.Goal;
 
 import java.util.LinkedList;
@@ -15,6 +16,8 @@ public class People extends Entity {
 
     public String name;
     public final long id;
+
+    public People killer;
 
     // STATS
     public int sway;
@@ -140,4 +143,14 @@ public class People extends Entity {
         this.knownPeopleWithLocation.remove(p);
     }
 
+    public void kill(People killer) {
+        this.killer = killer;
+    }
+
+    public void newGoal(Goal goal, Goal sourceGoal) {
+        if (sourceGoal != null) {
+            sourceGoal.prerequisites.add(goal);
+        }
+        goals.add(goal);
+    }
 }

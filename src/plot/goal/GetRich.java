@@ -27,7 +27,7 @@ public class GetRich extends Goal {
         // action could be Stealing, trading, selling,
         List<ActionType> possibleOptions = new LinkedList<>();
         ActionType[] possibleOptionsIfNothingElse = {
-                ActionType.TRADE, ActionType.SELL_ITEM, ActionType.STEAL_ITEM, ActionType.STEAL_PLACE, ActionType.STEAL_VIOLENTLY_PLACE, MUG
+                ActionType.TRADE, ActionType.SELL_ITEM, ActionType.STEAL_PLACE, ActionType.STEAL_VIOLENTLY_PLACE, MUG
         };
         if (me.isRelativelyGoodIn(me.consort)) {
             possibleOptions.add(ActionType.TRADE);

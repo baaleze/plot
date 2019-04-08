@@ -1,25 +1,27 @@
 package plot.goal;
 
 import plot.Entity;
+import plot.Item;
 import plot.People;
 import plot.World;
 import plot.action.Action;
+import plot.action.ActionType;
 
 import java.util.Optional;
 
 public class GetInfo extends Goal {
 
-    private final InfoType infoType;
+    /**
+     * Can be {@link People} or {@link Item} or null.
+     */
     private final Entity target;
 
-    public GetInfo(InfoType type, Entity target) {
-        this.infoType = type;
+    public GetInfo(Entity target) {
         this.target = target;
     }
 
     @Override
     public Optional<? extends Action> generateAction(World world, People me) {
-        // TODO
-        return Optional.empty();
+        return Action.isGoalNeeded(me, ActionType.LISTEN, world, target,this );
     }
 }
