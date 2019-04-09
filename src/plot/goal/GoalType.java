@@ -1,10 +1,8 @@
 package plot.goal;
 
 public enum GoalType {
-    SURVIVE,
     GET_RICH,
     KILL_SOMEBODY,
-    KILL_ANYONE,
     DO_CRIME,
     GET_ITEM,
     ADVENTURE,

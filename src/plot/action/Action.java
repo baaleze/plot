@@ -30,6 +30,28 @@ public abstract class Action {
             case STEAL_PLACE:
                 // we can always steal a city
                 return Optional.of(new StealPlace(world.whereIs(me)));
+            case STEAL_PEOPLE:
+                // steal money or item from someone
+                if (me.knownPeopleWithLocation.contains(target)) {
+                    // I know where he is
+                    if (world.whereIs(me).equals(world.whereIs((People) target))) {
+                        // already good place
+                        People p = (People) target;
+                        if (!p.items.isEmpty() && Math.random() < 0.5) {
+                            return Optional.of(new StealItem(Util.randomIn(p.items), null, p));
+                        } else {
+                            return Optional.of(new StealItem(null, null, p));
+                        }
+                    } else {
+                        // move there
+                        me.newGoal(new Travel(world.whereIs((People) target)), sourceGoal);
+                        break;
+                    }
+                } else {
+                    // need info
+                    me.newGoal(new GetInfo(target), sourceGoal);
+                    break;
+                }
             case STEAL_ITEM:
                 // do we know of an item that can be aquired ?
                 return acquireItem(me, world, AcquisitionType.STEAL, target,  sourceGoal);
@@ -37,6 +59,7 @@ public abstract class Action {
                 // check wealth
                 if (me.wealth < ((Item)target).worth * 1.5) {
                     me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
+                    break;
                 } else {
                     return acquireItem(me, world, AcquisitionType.BUY, target, sourceGoal);
                 }
@@ -53,7 +76,7 @@ public abstract class Action {
                     break;
                 } else {
                     // sell item to the place we live
-                    if (target != null && target instanceof Item) {
+                    if (target instanceof Item) {
                         return Optional.of(new SellItem((Item) target));
                     } else {
                         return Optional.of(new SellItem(Util.randomIn(me.items)));
@@ -81,7 +104,7 @@ public abstract class Action {
                 } else {
                     // not enough, need to get rich
                     me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
-                    return Optional.empty();
+                    break;
                 }
             case MUG:
                 if (!(target instanceof People)) {
@@ -111,7 +134,7 @@ public abstract class Action {
                     if (p == null) {
                         // no one to kill move else where at random
                         me.newGoal(new Travel(null), sourceGoal);
-                        return Optional.empty();
+                        break;
                     } else {
                         return Optional.of(new Kill(p));
                     }
@@ -123,7 +146,7 @@ public abstract class Action {
                     } else {
                         // find him
                         me.newGoal(new GetInfo(toKill), sourceGoal);
-                        return Optional.empty();
+                        break;
                     }
                 }
         }

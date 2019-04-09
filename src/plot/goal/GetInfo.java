@@ -18,6 +18,7 @@ public class GetInfo extends Goal {
 
     public GetInfo(Entity target) {
         this.target = target;
+        this.type = GoalType.GET_INFO;
     }
 
     @Override

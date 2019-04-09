@@ -24,10 +24,10 @@ public class People extends Entity {
     public People killer;
 
     // skills
-    public Skills skills;
+    public Skills skills = new Skills();
 
     // personality spectrum
-    public Personnality personnality;
+    public Personnality personnality = new Personnality();
 
     // Goals
     public List<Goal> goals = new LinkedList<>();

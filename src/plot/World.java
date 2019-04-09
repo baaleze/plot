@@ -2,22 +2,62 @@ package plot;
 
 import plot.people.People;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class World {
 
     public static final int COST_TO_TRAVEL = 10;
+    private static final int NB_CITIES = 5;
+    private static final int NB_PEOPLE = 25;
 
-    List<People> people;
-    List<Place> places;
-    List<Item> items;
-    Map<People, List<Relation>> relations;
-    Map<People, Map<Place, Integer>> reputations;
+    List<People> people = new LinkedList<>();
+    List<Place> places = new LinkedList<>();
+    Map<People, List<Relation>> relations = new HashMap<>();
+    Map<People, Map<Place, Integer>> reputations = new HashMap<>();
+    List<String> itemNames = new LinkedList<>();
+    private static String[] loots = {
+            "Sewer", "Crypt", "Dungeon", "Castle", "Bank", "Museum", "Tower", "Graveyard"
+    };
+    private String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public void create() {
+        // load items
+        loadItems();
+        // generate cities
+        for(int i = 0; i < NB_CITIES; i++) {
+            Place p = new Place(Util.randomIn(itemNames));
+            for (int n = 0; n < Util.randomInt(4); n++) {
+                p.items.put(new Item(itemNames), Util.randomIn(loots));
+            }
+            places.add(p);
+        }
+        // generate people
+        for(int i = 0; i < NB_PEOPLE; i++) {
+            People p = new People("Mr " + Util.randomIn(alphabet.split("")));
+            if (Math.random() < 0.3) {
+                p.items.add(new Item(itemNames));
+            }
+            // add to random city
+            Util.randomIn(places).residents.add(p);
+            people.add(p);
+        }
+    }
 
+    private void loadItems() {
+        //read file into stream, try-with-resources
+        try (Stream<String> stream = Files.lines(Paths.get("items.txt"))) {
+            itemNames = stream.collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -165,11 +205,13 @@ public class World {
     }
 
     public Item generateNewItem() {
-        // TODO
-        return new Item();
+        return new Item(itemNames);
     }
 
     public void updateReputation(People me, Place p, int diff) {
+        if (!reputations.containsKey(me)) {
+            reputations.put(me, new HashMap<>());
+        }
         Map<Place, Integer> reps = reputations.get(me);
         if (reps.containsKey(p)) {
             reps.put(p, reps.get(p) + diff);

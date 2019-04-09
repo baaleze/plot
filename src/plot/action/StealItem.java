@@ -6,6 +6,7 @@ import plot.goal.Steal;
 import plot.people.People;
 
 public class StealItem extends Action {
+    private static final int SNEAK_FACTOR = 50;
     private final Item item;
     private final Place place;
     private final People people;
@@ -23,8 +24,14 @@ public class StealItem extends Action {
             // stealing people
             if (Util.testStat(me.skills.sneak - people.skills.sneak)) {
                 // did it
-                people.items.remove(item);
-                me.items.add(item);
+                if (item != null) {
+                    people.items.remove(item);
+                    me.items.add(item);
+                } else {
+                    int stolen = Math.min(people.wealth, me.skills.sneak * SNEAK_FACTOR);
+                    people.loseWealth(stolen);
+                    me.wealth += stolen;
+                }
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found
                     world.updateReputation(me, world.whereIs(me), -1);
