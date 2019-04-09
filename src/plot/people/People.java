@@ -5,7 +5,10 @@ import plot.Item;
 import plot.Place;
 import plot.World;
 import plot.action.Action;
+import plot.goal.GetRich;
 import plot.goal.Goal;
+import plot.goal.GoalType;
+import plot.goal.KillSomebody;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,11 +47,15 @@ public class People extends Entity {
     public List<People> knownPeople = new LinkedList<>();
     public List<People> knownPeopleWithLocation = new LinkedList<>();
 
-
-
     public People(final String name) {
         this.name = name;
         this.id = nextId++;
+        // generate random goals
+        if (Math.random() < 0.5) {
+            this.newGoal(new GetRich(this.personnality.greedy, this.wealth), null);
+        } else if (Math.random() < 0.1) {
+            this.newGoal(new KillSomebody(null), null);
+        }
     }
 
     /**
