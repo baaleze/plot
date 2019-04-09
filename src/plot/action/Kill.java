@@ -43,8 +43,43 @@ public class Kill extends Action {
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found
                     world.updateReputation(me, world.whereIs(me), -1);
-                    world.updateRelation(target, me, RelationType.ATTACKED_ME, -2, null, null);
+                    world.updateRelation(target, me, RelationType.ATTACKED_ME, -2, null, null, true);
                 } // else ok got away with it
+            }
+        } else {
+            // no stealth
+            if (Util.testStat(me.skills.skirmish - target.skills.skirmish)) {
+                // success
+                target.killer = me;
+                // city got alerted anyway
+                world.updateReputation(me, world.whereIs(me), -2);
+                // relatives too
+                for(People relative: world.getAllRelatives(target)) {
+                    // add or amplify relation
+                    world.updateRelation(relative, me, RelationType.KILLED_RELATIVE, -4, null, target);
+                    // maybe vengeance ?
+                    if (relative.isMoreOfAPersonnality(relative.personnality.vengeful) && Util.testStat(relative.personnality.vengeful)) {
+                        relative.newGoal(new KillSomebody(me), null);
+                    }
+                }
+            } else {
+                // failure
+                if (!Util.testStat(target.skills.skirmish - me.skills.skirmish)) {
+                    // I got killed
+                    me.killer = target;
+                    for(People relative: world.getAllRelatives(me)) {
+                        // add or amplify relation
+                        world.updateRelation(relative, target, RelationType.KILLED_RELATIVE, -4, null, me);
+                        // maybe vengeance ?
+                        if (relative.isMoreOfAPersonnality(relative.personnality.vengeful) && Util.testStat(relative.personnality.vengeful)) {
+                            relative.newGoal(new KillSomebody(target), null);
+                        }
+                    }
+                } else {
+                    // got found anyway
+                    world.updateReputation(me, world.whereIs(me), -2);
+                    world.updateRelation(target, me, RelationType.ATTACKED_ME, -2, null, null, true);
+                }
             }
         }
 
@@ -52,6 +87,10 @@ public class Kill extends Action {
 
     @Override
     public void spawnGoals(World world, People me) {
-        // TODO
+        // more bloodshed ?
+        if(me.isMoreOfAPersonnality(me.personnality.violent) && Util.testStat(me.personnality.violent)) {
+            me.newGoal(new KillSomebody(null), null);
+        }
+        // TODO become a hitman?
     }
 }
