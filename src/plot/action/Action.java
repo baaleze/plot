@@ -34,7 +34,12 @@ public abstract class Action {
                 // do we know of an item that can be aquired ?
                 return acquireItem(me, world, AcquisitionType.STEAL, target,  sourceGoal);
             case BUY_ITEM:
-                return acquireItem(me, world, AcquisitionType.BUY, target, sourceGoal);
+                // check wealth
+                if (me.wealth < ((Item)target).worth * 1.5) {
+                    me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
+                } else {
+                    return acquireItem(me, world, AcquisitionType.BUY, target, sourceGoal);
+                }
             case TRADE:
                 // you can always trade
                 return Optional.of(new Trade());

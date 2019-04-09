@@ -181,4 +181,8 @@ public class World {
     public List<People> getAllRelatives(People people) {
         return this.relations.get(people).stream().filter(r -> r.type.isRelative()).map(r -> r.p2).collect(Collectors.toList());
     }
+
+    public int getReputation(People me, Place place) {
+        return reputations.get(me).getOrDefault(place, 0);
+    }
 }

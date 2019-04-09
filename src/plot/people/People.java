@@ -43,7 +43,6 @@ public class People extends Entity {
     public List<Item> knownItems = new LinkedList<>();
     public List<People> knownPeople = new LinkedList<>();
     public List<People> knownPeopleWithLocation = new LinkedList<>();
-    public List<Place> knownPlaces = new LinkedList<>();
 
 
 
@@ -154,5 +153,19 @@ public class People extends Entity {
             sourceGoal.prerequisites.add(goal);
         }
         goals.add(goal);
+    }
+
+    public void learnAbout(People people) {
+        if (!knownPeople.contains(people)) {
+            knownPeople.add(people);
+        }
+        if (!knownPeopleWithLocation.contains(people)) {
+            knownPeopleWithLocation.add(people);
+        }
+    }
+    public void learnAbout(Item item) {
+        if (!knownItems.contains(item)) {
+            knownItems.add(item);
+        }
     }
 }

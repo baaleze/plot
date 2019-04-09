@@ -12,6 +12,7 @@ public class Place extends Entity {
     private static final int MIN_POP = 50;
 
     private static final int MAX_POP = 1000;
+    public static final int PLACE_SKILL = 3;
 
     public static long nextId = 0;
 

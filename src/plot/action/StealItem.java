@@ -28,7 +28,7 @@ public class StealItem extends Action {
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found
                     world.updateReputation(me, world.whereIs(me), -1);
-                    world.updateRelation(people, me, RelationType.STOLE, -2, item, null, true);
+                    world.updateRelation(people, me, RelationType.STOLE, 2, item, null, true);
                     // vengeance
                     if (people.isMoreOfAPersonnality(people.personnality.vengeful) || people.isRelativelyGoodIn(people.skills.sneak)) {
                         people.newGoal(new Steal(me), null);
@@ -39,7 +39,7 @@ public class StealItem extends Action {
             }
         } else {
             // stealing place
-            if (Util.testStat(me.skills.sneak)) {
+            if (Util.testStat(me.skills.sneak - place.population / 100)) {
                 // did it
                 place.items.remove(item);
                 me.items.add(item);

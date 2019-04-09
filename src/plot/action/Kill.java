@@ -31,7 +31,7 @@ public class Kill extends Action {
                     // relatives too
                     for(People relative: world.getAllRelatives(target)) {
                         // add or amplify relation
-                        world.updateRelation(relative, me, RelationType.KILLED_RELATIVE, -4, null, target);
+                        world.updateRelation(relative, me, RelationType.KILLED_RELATIVE, 4, null, target);
                         // maybe vengeance ?
                         if (relative.isMoreOfAPersonnality(relative.personnality.vengeful) && Util.testStat(relative.personnality.vengeful)) {
                             relative.newGoal(new KillSomebody(me), null);
@@ -43,7 +43,7 @@ public class Kill extends Action {
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found
                     world.updateReputation(me, world.whereIs(me), -1);
-                    world.updateRelation(target, me, RelationType.ATTACKED_ME, -2, null, null, true);
+                    world.updateRelation(target, me, RelationType.ATTACKED_ME, 2, null, null, true);
                 } // else ok got away with it
             }
         } else {
@@ -56,7 +56,7 @@ public class Kill extends Action {
                 // relatives too
                 for(People relative: world.getAllRelatives(target)) {
                     // add or amplify relation
-                    world.updateRelation(relative, me, RelationType.KILLED_RELATIVE, -4, null, target);
+                    world.updateRelation(relative, me, RelationType.KILLED_RELATIVE, 4, null, target);
                     // maybe vengeance ?
                     if (relative.isMoreOfAPersonnality(relative.personnality.vengeful) && Util.testStat(relative.personnality.vengeful)) {
                         relative.newGoal(new KillSomebody(me), null);
@@ -64,12 +64,12 @@ public class Kill extends Action {
                 }
             } else {
                 // failure
-                if (!Util.testStat(target.skills.skirmish - me.skills.skirmish)) {
+                if (Util.testStat(target.skills.skirmish - me.skills.skirmish)) {
                     // I got killed
                     me.killer = target;
                     for(People relative: world.getAllRelatives(me)) {
                         // add or amplify relation
-                        world.updateRelation(relative, target, RelationType.KILLED_RELATIVE, -4, null, me);
+                        world.updateRelation(relative, target, RelationType.KILLED_RELATIVE, 4, null, me);
                         // maybe vengeance ?
                         if (relative.isMoreOfAPersonnality(relative.personnality.vengeful) && Util.testStat(relative.personnality.vengeful)) {
                             relative.newGoal(new KillSomebody(target), null);
@@ -78,7 +78,7 @@ public class Kill extends Action {
                 } else {
                     // got found anyway
                     world.updateReputation(me, world.whereIs(me), -2);
-                    world.updateRelation(target, me, RelationType.ATTACKED_ME, -2, null, null, true);
+                    world.updateRelation(target, me, RelationType.ATTACKED_ME, 2, null, null, true);
                 }
             }
         }
