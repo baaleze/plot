@@ -50,7 +50,7 @@ public class BuyItem extends Action {
         } else {
             if (Util.testStat(me.skills.consort - Place.PLACE_SKILL + world.getReputation(me, place))) {
                 // success
-                int price = item.getSellingPrice(people.skills.consort, Place.PLACE_SKILL);
+                int price = item.getSellingPrice(Place.PLACE_SKILL, me.skills.consort);
                 me.loseWealth(price);
                 place.wealth += price;
                 me.items.add(item);

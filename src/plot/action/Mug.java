@@ -54,6 +54,5 @@ public class Mug extends Action {
 
     @Override
     public void spawnGoals(World world, People me) {
-        // TODO
     }
 }

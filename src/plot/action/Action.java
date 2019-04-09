@@ -45,7 +45,7 @@ public abstract class Action {
                 return Optional.of(new Trade());
             case LISTEN:
                 // you can always get info
-                return Optional.of(new Listen());
+                return Optional.of(new Listen(target));
             case SELL_ITEM:
                 if (me.items.isEmpty()) {
                     // no items!
