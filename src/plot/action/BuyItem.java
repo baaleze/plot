@@ -1,8 +1,7 @@
 package plot.action;
 
-import plot.Entity;
 import plot.Item;
-import plot.People;
+import plot.people.People;
 import plot.Place;
 
 public class BuyItem extends StealItem {

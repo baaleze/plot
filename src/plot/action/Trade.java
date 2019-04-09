@@ -1,6 +1,6 @@
 package plot.action;
 
-import plot.People;
+import plot.people.People;
 import plot.World;
 
 public class Trade extends Action {

@@ -1,10 +1,10 @@
 package plot.goal;
 
-import plot.People;
 import plot.Util;
 import plot.World;
 import plot.action.Action;
 import plot.action.ActionType;
+import plot.people.People;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,19 +29,20 @@ public class GetRich extends Goal {
         ActionType[] possibleOptionsIfNothingElse = {
                 ActionType.TRADE, ActionType.SELL_ITEM, ActionType.STEAL_PLACE, ActionType.STEAL_VIOLENTLY_PLACE, MUG
         };
-        if (me.isRelativelyGoodIn(me.consort)) {
+        if (me.isRelativelyGoodIn(me.skills.consort)) {
             possibleOptions.add(ActionType.TRADE);
             possibleOptions.add(ActionType.SELL_ITEM);
         }
-        if (me.isRelativelyGoodIn(me.sneak)) {
+        if (me.isRelativelyGoodIn(me.skills.sneak)) {
             possibleOptions.add(ActionType.STEAL_PLACE);
         }
-        if (me.isRelativelyGoodIn(me.skirmish) && Util.testStat(me.violent)) {
+        if (me.isRelativelyGoodIn(me.skills.skirmish) && me.isMoreOfAPersonnality(me.personnality.violent)) {
             possibleOptions.add(MUG);
         }
-        if (me.isRelativelyGoodIn(me.wreck) && Util.testStat(me.violent)) {
+        if (me.isRelativelyGoodIn(me.skills.wreck) && me.isMoreOfAPersonnality(me.personnality.violent)) {
             possibleOptions.add(ActionType.STEAL_VIOLENTLY_PLACE);
         }
+        // TODO also GET A JOB
 
         // choose one possible action
         ActionType choice = Util.randomIn(possibleOptions);

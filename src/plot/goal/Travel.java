@@ -1,6 +1,6 @@
 package plot.goal;
 
-import plot.People;
+import plot.people.People;
 import plot.Place;
 import plot.World;
 import plot.action.Action;

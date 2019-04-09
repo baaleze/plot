@@ -1,6 +1,7 @@
 package plot.action;
 
 import plot.*;
+import plot.people.People;
 
 public class StealItem extends Action {
     private final Item item;
@@ -20,6 +21,6 @@ public class StealItem extends Action {
 
     @Override
     public void spawnGoals(World world, People me) {
-// TODO
+        // TODO
     }
 }

@@ -1,5 +1,7 @@
 package plot;
 
+import plot.people.People;
+
 public class Relation {
 
     public People p1;

@@ -1,6 +1,6 @@
 package plot.goal;
 
-import plot.People;
+import plot.people.People;
 import plot.Util;
 import plot.World;
 import plot.action.Action;
@@ -25,13 +25,13 @@ public class GetItem extends Goal {
         ActionType[] possibleOptionsIfNothingElse = {
                 BUY_ITEM, STEAL_ITEM, CRAFT_ITEM
         };
-        if (me.isRelativelyGoodIn(me.consort)) {
+        if (me.isRelativelyGoodIn(me.skills.consort)) {
             possibleOptions.add(ActionType.BUY_ITEM);
         }
-        if (me.isRelativelyGoodIn(me.sneak)) {
+        if (me.isRelativelyGoodIn(me.skills.sneak)) {
             possibleOptions.add(ActionType.STEAL_ITEM);
         }
-        if (me.isRelativelyGoodIn(me.craft) && Util.testStat(me.creative)) {
+        if (me.isRelativelyGoodIn(me.skills.craft) && me.isMoreOfAPersonnality(me.personnality.creative)) {
             possibleOptions.add(CRAFT_ITEM);
         }
 

@@ -1,12 +1,12 @@
 package plot.action;
 
-import plot.People;
+import plot.people.People;
 import plot.Place;
 import plot.World;
 
-public class StealViolentlyPlace extends StealPlace {
+public class Pillage extends StealPlace {
 
-    public StealViolentlyPlace(Place place) {
+    public Pillage(Place place) {
         super(place);
     }
 

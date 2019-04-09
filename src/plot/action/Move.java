@@ -1,6 +1,6 @@
 package plot.action;
 
-import plot.People;
+import plot.people.People;
 import plot.Place;
 import plot.Util;
 import plot.World;
@@ -28,12 +28,12 @@ public class Move extends Action {
     @Override
     public void spawnGoals(final World world, People me) {
         // maybe with ambition
-        if (Util.testStat(me.ambitious)) {
+        if (me.isMoreOfAPersonnality(me.personnality.ambitious) && Util.testStat(me.personnality.ambitious)) {
             me.goals.add(new Ambition(target));
         }
         // or greed
-        if (Util.testStat(me.greedy - 2)) {
-            me.goals.add(new GetRich(me.greedy, me.wealth));
+        if (me.isMoreOfAPersonnality(me.personnality.greedy) && Util.testStat(me.personnality.greedy)) {
+            me.goals.add(new GetRich(me.personnality.greedy, me.wealth));
         }
     }
 

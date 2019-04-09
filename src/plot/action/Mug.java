@@ -1,6 +1,6 @@
 package plot.action;
 
-import plot.People;
+import plot.people.People;
 import plot.RelationType;
 import plot.Util;
 import plot.World;
@@ -16,13 +16,13 @@ public class Mug extends Action {
     @Override
     public void apply(World world, People me) {
         // uses skirmish
-        if (Util.testStat(me.skirmish - target.skirmish)) {
+        if (Util.testStat(me.skills.skirmish - target.skills.skirmish)) {
             // success take half wealth
             me.wealth = target.wealth / 2;
             target.loseWealth(target.wealth / 2);
             // new relation
-            world.updateRelation(target, me, RelationType.STOLE, 4, item, thirdParty);
-            if (Util.testStat(target.greedy) || Util.testStat(target.vengeful)) {
+            world.updateRelation(target, me, RelationType.STOLE, 4, null, null);
+            if (me.isMoreOfAPersonnality(me.personnality.greedy) || me.isMoreOfAPersonnality(me.personnality.vengeful)) {
                 target.newGoal(new Steal(me), null);
             }
 

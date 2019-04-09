@@ -1,24 +1,21 @@
 package plot.goal;
 
-import plot.people.People;
-import plot.Place;
 import plot.World;
 import plot.action.Action;
+import plot.people.People;
 
 import java.util.Optional;
 
-public class Ambition extends Goal {
+public class KillSomebody extends Goal {
 
-    private final Place place;
+    private final People target;
 
-    public Ambition(Place target) {
-        this.type = GoalType.AMBITION;
-        this.place = target;
+    public KillSomebody(People target) {
+        this.target = target;
     }
 
     @Override
     public Optional<? extends Action> generateAction(World world, People me) {
-        // TODO
         return Optional.empty();
     }
 }

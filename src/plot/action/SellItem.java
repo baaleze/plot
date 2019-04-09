@@ -1,7 +1,7 @@
 package plot.action;
 
 import plot.Item;
-import plot.People;
+import plot.people.People;
 import plot.World;
 
 public class SellItem extends Action {

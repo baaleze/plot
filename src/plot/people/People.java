@@ -1,7 +1,10 @@
-package plot;
+package plot.people;
 
+import plot.Entity;
+import plot.Item;
+import plot.Place;
+import plot.World;
 import plot.action.Action;
-import plot.goal.GetItem;
 import plot.goal.Goal;
 
 import java.util.LinkedList;
@@ -11,7 +14,8 @@ import java.util.stream.Collectors;
 
 public class People extends Entity {
 
-    public static final int DEFAULT_NB_STATS = 4;
+    public static final int DEFAULT_NB_SKILLS = 3;
+    public static final int DEFAULT_NB_PERSONNALITY = 4;
     public static long nextId = 0;
 
     public String name;
@@ -19,28 +23,11 @@ public class People extends Entity {
 
     public People killer;
 
-    // STATS
-    public int sway;
-    public int consort;
-    public int skirmish;
-    public int wreck;
-    public int scout;
-    public int sneak;
-    public int management;
-    public int craft;
+    // skills
+    public Skills skills;
 
     // personality spectrum
-    public int honest;
-    public int violent;
-    public int racist;
-    public int shy;
-    public int greedy;
-    public int envious;
-    public int glutton;
-    public int lust;
-    public int ambitious;
-    public int creative;
-    public int vengeful;
+    public Personnality personnality;
 
     // Goals
     public List<Goal> goals = new LinkedList<>();
@@ -66,16 +53,20 @@ public class People extends Entity {
     }
 
     /**
-     * Returns true if the stat value is at least the 4th best stat when compared to other.
+     * Returns true if the skill value is at least the 4th best stat when compared to other.
      * @param statToCompare
      * @return
      */
     public boolean isRelativelyGoodIn(int statToCompare) {
-        return this.isRelativelyGoodIn(statToCompare, DEFAULT_NB_STATS);
+        return this.isRelativelyGoodIn(statToCompare, DEFAULT_NB_SKILLS);
+    }
+
+    public boolean isMoreOfAPersonnality(int statToCompare) {
+        return this.isMoreOfAPersonnality(statToCompare, DEFAULT_NB_PERSONNALITY);
     }
 
     /**
-     * Returns true if the stat is at least the 'nbStatsThatCanBeHigher'th stat when compared to other.
+     * Returns true if the skill is at least the 'nbStatsThatCanBeHigher'th stat when compared to other.
      * The lower the number, the better the stat must be. With 1, the stat must be the best stat.
      * @param statToCompare
      * @param nbStatsThatCanBeHigher
@@ -83,22 +74,30 @@ public class People extends Entity {
      */
     public boolean isRelativelyGoodIn(int statToCompare, int nbStatsThatCanBeHigher) {
         int betterStatNb = 0;
-        betterStatNb += statToCompare < sway ? 1 : 0;
-        betterStatNb += statToCompare < skirmish ? 1 : 0;
-        betterStatNb += statToCompare < consort ? 1 : 0;
-        betterStatNb += statToCompare < wreck ? 1 : 0;
-        betterStatNb += statToCompare < scout ? 1 : 0;
-        betterStatNb += statToCompare < sneak ? 1 : 0;
-        betterStatNb += statToCompare < management ? 1 : 0;
-        betterStatNb += statToCompare < honest ? 1 : 0;
-        betterStatNb += statToCompare < violent ? 1 : 0;
-        betterStatNb += statToCompare < racist ? 1 : 0;
-        betterStatNb += statToCompare < shy ? 1 : 0;
-        betterStatNb += statToCompare < greedy ? 1 : 0;
-        betterStatNb += statToCompare < envious ? 1 : 0;
-        betterStatNb += statToCompare < glutton ? 1 : 0;
-        betterStatNb += statToCompare < lust ? 1 : 0;
-        betterStatNb += statToCompare < ambitious ? 1 : 0;
+        betterStatNb += statToCompare < skills.sway ? 1 : 0;
+        betterStatNb += statToCompare < skills.skirmish ? 1 : 0;
+        betterStatNb += statToCompare < skills.consort ? 1 : 0;
+        betterStatNb += statToCompare < skills.wreck ? 1 : 0;
+        betterStatNb += statToCompare < skills.scout ? 1 : 0;
+        betterStatNb += statToCompare < skills.sneak ? 1 : 0;
+        betterStatNb += statToCompare < skills.management ? 1 : 0;
+        betterStatNb += statToCompare < skills.craft ? 1 : 0;
+        return betterStatNb < nbStatsThatCanBeHigher;
+    }
+
+    public boolean isMoreOfAPersonnality(int statToCompare, int nbStatsThatCanBeHigher) {
+        int betterStatNb = 0;
+        betterStatNb += statToCompare < personnality.honest ? 1 : 0;
+        betterStatNb += statToCompare < personnality.violent ? 1 : 0;
+        betterStatNb += statToCompare < personnality.racist ? 1 : 0;
+        betterStatNb += statToCompare < personnality.shy ? 1 : 0;
+        betterStatNb += statToCompare < personnality.greedy ? 1 : 0;
+        betterStatNb += statToCompare < personnality.envious ? 1 : 0;
+        betterStatNb += statToCompare < personnality.glutton ? 1 : 0;
+        betterStatNb += statToCompare < personnality.lust ? 1 : 0;
+        betterStatNb += statToCompare < personnality.ambitious ? 1 : 0;
+        betterStatNb += statToCompare < personnality.vengeful ? 1 : 0;
+        betterStatNb += statToCompare < personnality.creative ? 1 : 0;
         return betterStatNb < nbStatsThatCanBeHigher;
     }
 
@@ -124,13 +123,14 @@ public class People extends Entity {
     }
 
     public void applyAction(final World world) {
-        this.action.apply(world, this);
-        // spawn new goals ??
-        this.action.spawnGoals(world, this);
         // finished ?
         if (this.action.isFinished()) {
+            this.action.apply(world, this);
+            // spawn new goals ??
+            this.action.spawnGoals(world, this);
+            // done, remove it
             this.action = null;
-        }
+        } // else the action is not yet done nothing happens yet
     }
 
     public void loseWealth(int cost) {

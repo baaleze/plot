@@ -1,8 +1,8 @@
 package plot.goal;
 
-import plot.People;
 import plot.World;
 import plot.action.Action;
+import plot.people.People;
 
 import java.util.LinkedList;
 import java.util.List;

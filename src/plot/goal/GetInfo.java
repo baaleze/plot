@@ -2,7 +2,7 @@ package plot.goal;
 
 import plot.Entity;
 import plot.Item;
-import plot.People;
+import plot.people.People;
 import plot.World;
 import plot.action.Action;
 import plot.action.ActionType;

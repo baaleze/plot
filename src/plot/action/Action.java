@@ -2,10 +2,9 @@ package plot.action;
 
 import plot.*;
 import plot.goal.*;
+import plot.people.People;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class Action {
 
@@ -27,7 +26,7 @@ public abstract class Action {
     public static Optional<Action> isGoalNeeded(People me, ActionType choice, World world, Entity target, Goal sourceGoal) {
         switch (choice) {
             case STEAL_VIOLENTLY_PLACE:
-                return Optional.of(new StealViolentlyPlace(world.whereIs(me)));
+                return Optional.of(new Pillage(world.whereIs(me)));
             case STEAL_PLACE:
                 // we can always steal a city
                 return Optional.of(new StealPlace(world.whereIs(me)));
@@ -59,9 +58,9 @@ public abstract class Action {
                 // check wealth
                 if (me.wealth > 5) {
                     // ok
-                    return Optional.of(new CraftItem(me.craft, me.wealth));
+                    return Optional.of(new CraftItem(me.skills.craft, me.wealth));
                 } else {
-                    me.newGoal(new GetRich(me.greedy, me.wealth), sourceGoal);
+                    me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
                     break;
                 }
             case MOVE_TO_CITY:
@@ -76,18 +75,16 @@ public abstract class Action {
                     return Optional.of(new Move(start, finish));
                 } else {
                     // not enough, need to get rich
-                    me.newGoal(new GetRich(me.greedy, me.wealth), sourceGoal);
+                    me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
                     return Optional.empty();
                 }
             case MUG:
                 if (!(target instanceof People)) {
-                    // find a target
-                    Place myPlace = world.whereIs(me);
-                    List<People> knownResidents = myPlace.residents.stream().filter(p -> me.knownPeopleWithLocation.contains(p)).collect(Collectors.toList());
-                    People p = Util.randomIn(knownResidents);
+                    // find a target that I hate in the same city
+                    People p = world.getHatedTarget(me, true);
                     if (p == null) {
                         // no one is here mug the city
-                        return Optional.of(new StealViolentlyPlace(myPlace));
+                        return Optional.of(new Pillage(world.whereIs(me)));
                     } else {
                         return Optional.of(new Mug(p));
                     }
@@ -104,10 +101,8 @@ public abstract class Action {
                 }
             case KILL:
                 if (!(target instanceof People)) {
-                    // find a target
-                    Place myPlace = world.whereIs(me);
-                    List<People> knownResidents = myPlace.residents.stream().filter(p -> me.knownPeopleWithLocation.contains(p)).collect(Collectors.toList());
-                    People p = Util.randomIn(knownResidents);
+                    // find a target that I hate the most
+                    People p = world.getHatedTarget(me, true);
                     if (p == null) {
                         // no one to kill move else where at random
                         me.newGoal(new Travel(null), sourceGoal);
@@ -116,13 +111,13 @@ public abstract class Action {
                         return Optional.of(new Kill(p));
                     }
                 } else {
-                    People toMug = (People) target;
-                    if (me.knownPeopleWithLocation.contains(toMug)) {
-                        // ok I know him
-                        return Optional.of(new Kill(toMug));
+                    People toKill = (People) target;
+                    if (me.knownPeopleWithLocation.contains(toKill)) {
+                        // ok I know where he is
+                        return Optional.of(new Kill(toKill));
                     } else {
                         // find him
-                        me.newGoal(new GetInfo(toMug), sourceGoal);
+                        me.newGoal(new GetInfo(toKill), sourceGoal);
                         return Optional.empty();
                     }
                 }

@@ -1,7 +1,11 @@
 package plot.action;
 
-import plot.People;
+
+import plot.Item;
+import plot.Util;
 import plot.World;
+import plot.goal.GetRich;
+import plot.people.People;
 
 public class CraftItem extends Action {
 
@@ -19,11 +23,16 @@ public class CraftItem extends Action {
 
     @Override
     public void apply(World world, People me) {
-        // TODO
+        // new item is created!
+        me.loseWealth(mag * COST_FACTOR);
+        Item item = world.generateNewItem();
+        me.items.add(item);
     }
 
     @Override
     public void spawnGoals(World world, People me) {
-        // TODO
+        if (me.isMoreOfAPersonnality(me.personnality.greedy) && Util.testStat(me.personnality.greedy)) {
+            me.newGoal(new GetRich(me.personnality.greedy, me.wealth), null);
+        }
     }
 }
