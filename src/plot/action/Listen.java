@@ -64,7 +64,7 @@ public class Listen extends Action {
         }
         // we learned ok!
         me.goals.forEach(g -> {
-            if (g instanceof GetInfo) {
+            if (g instanceof GetInfo && g.prerequisites.isEmpty()) {
                 g.setCompleted();
             }
         });

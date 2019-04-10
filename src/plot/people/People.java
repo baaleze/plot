@@ -136,6 +136,11 @@ public class People extends Entity {
             this.action.spawnGoals(world, this);
             // done, remove it
             this.action = null;
+            // check for completed goals
+            List<Goal> completedGoals = goals.stream().filter(g -> g.prerequisites.isEmpty() && g.isComplete(world)).collect(Collectors.toList());
+            goals.removeAll(completedGoals);
+            // remove these goals as prerequisites from remaining goals
+            goals.forEach(g -> g.prerequisites.removeAll(completedGoals));
         } // else the action is not yet done nothing happens yet
     }
 
