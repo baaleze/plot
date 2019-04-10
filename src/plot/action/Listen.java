@@ -1,6 +1,7 @@
 package plot.action;
 
 import plot.*;
+import plot.goal.GetInfo;
 import plot.people.People;
 
 import java.util.List;
@@ -61,7 +62,12 @@ public class Listen extends Action {
                 }
             }
         }
-
+        // we learned ok!
+        me.goals.forEach(g -> {
+            if (g instanceof GetInfo) {
+                g.setCompleted();
+            }
+        });
     }
 
     @Override

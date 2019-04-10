@@ -1,5 +1,6 @@
 package plot.goal;
 
+import plot.Entity;
 import plot.World;
 import plot.action.Action;
 import plot.people.People;
@@ -11,8 +12,17 @@ import java.util.Optional;
 public abstract class Goal {
 
     public GoalType type;
+    public People owner;
     public List<Goal> prerequisites = new LinkedList<>();
 
     public abstract Optional<? extends Action> generateAction(World world, People me);
 
+    public abstract boolean isComplete(World world);
+    public abstract void setCompleted();
+
+    public abstract void setTarget(Entity i);
+
+    public void setOwner(People p) {
+        owner = p;
+    }
 }

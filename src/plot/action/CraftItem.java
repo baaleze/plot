@@ -9,24 +9,21 @@ import plot.people.People;
 
 public class CraftItem extends Action {
 
-    private static final int COST_FACTOR = 10;
-    private int mag;
+    public static final int COST_FACTOR = 10;
+    private Item target;
 
-    public CraftItem(int craft, int wealth) {
+
+    public CraftItem(int craft, int wealth, Item target) {
         // compute magnitude of the item crafted
-        mag = craft;
-        if (mag * COST_FACTOR > wealth) {
-            mag = (int) Math.floor(wealth / COST_FACTOR);
-        }
-        this.monthCount = mag - (craft - mag); // faster to do lesser item when skilled
+        this.target = target;
+        this.monthCount = target.mag - (craft - target.mag); // faster to do lesser item when skilled
     }
 
     @Override
     public void apply(World world, People me) {
         // new item is created!
-        me.loseWealth(mag * COST_FACTOR);
-        Item item = world.generateNewItem();
-        me.items.add(item);
+        me.loseWealth(target.mag * COST_FACTOR);
+        me.items.add(target);
     }
 
     @Override

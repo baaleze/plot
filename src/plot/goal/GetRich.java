@@ -1,5 +1,6 @@
 package plot.goal;
 
+import plot.Entity;
 import plot.Util;
 import plot.World;
 import plot.action.Action;
@@ -51,5 +52,20 @@ public class GetRich extends Goal {
         }
         // test if it is possible to do right now or a new goal is needed
         return Action.isGoalNeeded(me, choice, world, null, this);
+    }
+
+    @Override
+    public boolean isComplete(World world) {
+        return owner.wealth > wealthNeed;
+    }
+
+    @Override
+    public void setCompleted() {
+
+    }
+
+    @Override
+    public void setTarget(Entity i) {
+
     }
 }

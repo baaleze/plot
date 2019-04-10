@@ -1,5 +1,6 @@
 package plot.goal;
 
+import plot.Entity;
 import plot.Util;
 import plot.World;
 import plot.action.Action;
@@ -14,7 +15,7 @@ import static plot.action.ActionType.*;
 
 public class KillSomebody extends Goal {
 
-    private final People target;
+    private People target;
 
     public KillSomebody(People target) {
         this.target = target;
@@ -40,5 +41,23 @@ public class KillSomebody extends Goal {
         }
         // test if it is possible to do right now or a new goal is needed
         return Action.isGoalNeeded(me, choice, world, null, this);
+    }
+
+    @Override
+    public boolean isComplete(World world) {
+        // target is dead
+        return target.killer != null;
+    }
+
+    @Override
+    public void setCompleted() {
+
+    }
+
+    @Override
+    public void setTarget(Entity i) {
+        if (target == null) {
+            target = (People) i;
+        }
     }
 }

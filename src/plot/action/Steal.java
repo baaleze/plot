@@ -2,16 +2,15 @@ package plot.action;
 
 import plot.*;
 import plot.goal.KillSomebody;
-import plot.goal.Steal;
 import plot.people.People;
 
-public class StealItem extends Action {
+public class Steal extends Action {
     private static final int SNEAK_FACTOR = 50;
     private final Item item;
     private final Place place;
     private final People people;
 
-    public StealItem(Item i, Place place, People people) {
+    public Steal(Item i, Place place, People people) {
         this.item = i;
         this.place = place;
         this.people = people;
@@ -24,6 +23,11 @@ public class StealItem extends Action {
             // stealing people
             if (Util.testStat(me.skills.sneak - people.skills.sneak)) {
                 // did it
+                me.goals.forEach(g -> {
+                    if (g instanceof plot.goal.Steal && ((plot.goal.Steal)g).target.equals(people)) {
+                        g.setCompleted();
+                    }
+                });
                 if (item != null) {
                     people.items.remove(item);
                     me.items.add(item);
@@ -38,7 +42,7 @@ public class StealItem extends Action {
                     world.updateRelation(people, me, RelationType.STOLE, 2, item, null, true);
                     // vengeance
                     if (people.isMoreOfAPersonnality(people.personnality.vengeful) || people.isRelativelyGoodIn(people.skills.sneak)) {
-                        people.newGoal(new Steal(me), null);
+                        people.newGoal(new plot.goal.Steal(me), null);
                     } else if (people.isMoreOfAPersonnality(people.personnality.vengeful) && people.isMoreOfAPersonnality(people.personnality.violent)) {
                         people.newGoal(new KillSomebody(me), null);
                     }
@@ -48,8 +52,19 @@ public class StealItem extends Action {
             // stealing place
             if (Util.testStat(me.skills.sneak - place.population / 100)) {
                 // did it
-                place.items.remove(item);
-                me.items.add(item);
+                me.goals.forEach(g -> {
+                    if (g instanceof plot.goal.Steal && ((plot.goal.Steal)g).target.equals(place)) {
+                        g.setCompleted();
+                    }
+                });
+                if (item != null) {
+                    place.items.remove(item);
+                    me.items.add(item);
+                } else {
+                    int stolen = Math.min(place.wealth, me.skills.sneak * SNEAK_FACTOR);
+                    place.wealth -= stolen;
+                    me.wealth += stolen;
+                }
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found
                     world.updateReputation(me, world.whereIs(me), -2);
@@ -62,7 +77,7 @@ public class StealItem extends Action {
     public void spawnGoals(World world, People me) {
         // steal more ?
         if (me.isRelativelyGoodIn(me.skills.sneak) && me.isMoreOfAPersonnality(me.personnality.greedy) && Util.testStat(me.personnality.greedy)) {
-            me.newGoal(new Steal(null), null);
+            me.newGoal(new plot.goal.Steal(null), null);
         }
     }
 }

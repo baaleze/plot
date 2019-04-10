@@ -159,6 +159,7 @@ public class People extends Entity {
         if (sourceGoal != null) {
             sourceGoal.prerequisites.add(goal);
         }
+        goal.setOwner(this);
         goals.add(goal);
     }
 

@@ -29,7 +29,12 @@ public abstract class Action {
                 return Optional.of(new Pillage(world.whereIs(me)));
             case STEAL_PLACE:
                 // we can always steal a city
-                return Optional.of(new StealPlace(world.whereIs(me)));
+                Place toSteal = (Place) target;
+                if (toSteal == null) {
+                    toSteal = world.whereIs(me);
+                    sourceGoal.setTarget(toSteal);
+                }
+                return Optional.of(new Steal(null, toSteal, null));
             case STEAL_PEOPLE:
                 // steal money or item from someone
                 if (me.knownPeopleWithLocation.contains(target)) {
@@ -38,9 +43,9 @@ public abstract class Action {
                         // already good place
                         People p = (People) target;
                         if (!p.items.isEmpty() && Math.random() < 0.5) {
-                            return Optional.of(new StealItem(Util.randomIn(p.items), null, p));
+                            return Optional.of(new Steal(Util.randomIn(p.items), null, p));
                         } else {
-                            return Optional.of(new StealItem(null, null, p));
+                            return Optional.of(new Steal(null, null, p));
                         }
                     } else {
                         // move there
@@ -57,7 +62,7 @@ public abstract class Action {
                 return acquireItem(me, world, AcquisitionType.STEAL, target,  sourceGoal);
             case BUY_ITEM:
                 // check wealth
-                if (me.wealth < ((Item)target).worth * 1.5) {
+                if (target != null && me.wealth < ((Item)target).worth * 1.5) {
                     me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
                     break;
                 } else {
@@ -79,14 +84,16 @@ public abstract class Action {
                     if (target instanceof Item) {
                         return Optional.of(new SellItem((Item) target));
                     } else {
-                        return Optional.of(new SellItem(Util.randomIn(me.items)));
+                        Item i = Util.randomIn(me.items);
+                        sourceGoal.setTarget(i);
+                        return Optional.of(new SellItem(i));
                     }
                 }
             case CRAFT_ITEM:
                 // check wealth
-                if (me.wealth > 5) {
+                if (me.wealth > ((Item)target).mag * CraftItem.COST_FACTOR) {
                     // ok
-                    return Optional.of(new CraftItem(me.skills.craft, me.wealth));
+                    return Optional.of(new CraftItem(me.skills.craft, me.wealth, (Item) target));
                 } else {
                     me.newGoal(new GetRich(me.personnality.greedy, me.wealth), sourceGoal);
                     break;
@@ -114,6 +121,7 @@ public abstract class Action {
                         // no one is here mug the city
                         return Optional.of(new Pillage(world.whereIs(me)));
                     } else {
+                        sourceGoal.setTarget(p);
                         return Optional.of(new Mug(p));
                     }
                 } else {
@@ -136,6 +144,7 @@ public abstract class Action {
                         me.newGoal(new Travel(null), sourceGoal);
                         break;
                     } else {
+                        sourceGoal.setTarget(p);
                         return Optional.of(new Kill(p));
                     }
                 } else {
@@ -155,7 +164,7 @@ public abstract class Action {
 
     private static Optional<Action> acquireItem(People me, World world, AcquisitionType type, Entity target, Goal sourceGoal) {
         // target has already been decided
-        if (target != null && target instanceof Item) {
+        if (target instanceof Item) {
             Item item = (Item) target;
             Place myPlace = world.whereIs(me);
             if(me.knownItems.contains(item)) {
@@ -165,7 +174,7 @@ public abstract class Action {
                 if (itemPlace != null) {
                     if (myPlace.equals(itemPlace)) {
                         return Optional.of(type == AcquisitionType.STEAL ?
-                                new StealItem(item, myPlace, null) :
+                                new Steal(item, myPlace, null) :
                                 new BuyItem(item, myPlace, null));
                     } else {
                         me.newGoal(new Travel(itemPlace), sourceGoal);
@@ -176,7 +185,7 @@ public abstract class Action {
                     if (me.knownPeopleWithLocation.contains(owner)) {
                         if (world.whereIs(owner).equals(myPlace)) {
                             return Optional.of(type == AcquisitionType.STEAL ?
-                                    new StealItem(item, null, owner) :
+                                    new Steal(item, null, owner) :
                                     new BuyItem(item, null, owner));
                         } else {
                             // new goal, go there !
@@ -206,15 +215,17 @@ public abstract class Action {
                     People owner = world.whoHas(i);
                     // priority to items where we live
                     if (myPlace.equals(itemPlace)) {
+                        sourceGoal.setTarget(i);
                         // steal it from place
                         return Optional.of(type == AcquisitionType.STEAL ?
-                                new StealItem(i, myPlace, null) :
+                                new Steal(i, myPlace, null) :
                                 new BuyItem(i, myPlace, null));
                     } else if (owner != null && me.knownPeopleWithLocation.contains(owner)) {
                         // someone has it and i know where he is
                         if (myPlace.equals(world.whereIs(owner))) { // same place GO!!
+                            sourceGoal.setTarget(i);
                             return Optional.of(type == AcquisitionType.STEAL ?
-                                    new StealItem(i, null, owner) :
+                                    new Steal(i, null, owner) :
                                     new BuyItem(i, null, owner));
                         }
                     }
@@ -223,22 +234,28 @@ public abstract class Action {
                 Item i = Util.randomIn(me.knownItems);
                 Place itemPlace = world.whereIs(i);
                 People owner = world.whoHas(i);
-                if (itemPlace != null) {
-                    // new goal, go there !
-                    me.newGoal(new Travel(itemPlace), sourceGoal);
+                if (i == null) {
+                    me.newGoal(new GetInfo(null),sourceGoal);
                     return Optional.empty();
-                }
-                if (owner != null) {
-                    if (me.knownPeopleWithLocation.contains(owner)) {
+                } else {
+                    sourceGoal.setTarget(i);
+                    if (itemPlace != null) {
                         // new goal, go there !
-                        me.newGoal(new Travel(world.whereIs(owner)), sourceGoal);
-                        return Optional.empty();
-                    } else {
-                        // find him
-                        me.newGoal(new GetInfo(owner), sourceGoal);
+                        me.newGoal(new Travel(itemPlace), sourceGoal);
                         return Optional.empty();
                     }
-                } // else should not happen
+                    if (owner != null) {
+                        if (me.knownPeopleWithLocation.contains(owner)) {
+                            // new goal, go there !
+                            me.newGoal(new Travel(world.whereIs(owner)), sourceGoal);
+                            return Optional.empty();
+                        } else {
+                            // find him
+                            me.newGoal(new GetInfo(owner), sourceGoal);
+                            return Optional.empty();
+                        }
+                    } // else should not happen
+                }
             }
         }
         return Optional.empty();

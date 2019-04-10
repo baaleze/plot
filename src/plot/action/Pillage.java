@@ -4,10 +4,12 @@ import plot.people.People;
 import plot.Place;
 import plot.World;
 
-public class Pillage extends StealPlace {
+public class Pillage extends Action {
+
+    private Place target;
 
     public Pillage(Place place) {
-        super(place);
+        this.target = place;
     }
 
     @Override

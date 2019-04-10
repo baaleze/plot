@@ -11,7 +11,8 @@ import plot.action.Action;
 import java.util.Optional;
 
 public class Steal extends Goal {
-    private final Entity target;
+    public final Entity target;
+    private boolean completed = false;
 
     public Steal(Entity target) {
         this.target = target;
@@ -27,5 +28,24 @@ public class Steal extends Goal {
         } else {
             return Action.isGoalNeeded(me, ActionType.STEAL_PEOPLE, world, target, this);
         }
+    }
+
+    @Override
+    public boolean isComplete(World world) {
+        if (target instanceof Item) {
+            return owner.items.contains(target);
+        } else {
+            return completed;
+        }
+    }
+
+    @Override
+    public void setCompleted() {
+        completed = true;
+    }
+
+    @Override
+    public void setTarget(Entity i) {
+
     }
 }

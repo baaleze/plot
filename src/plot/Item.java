@@ -7,10 +7,12 @@ public class Item extends Entity {
     public String name;
     public String description;
     public int worth;
+    public int mag;
 
     public Item(List<String> itemNames) {
         name = Util.randomIn(itemNames);
-        worth = 20 * name.length();
+        mag = name.length() / 2;
+        worth = 20 * mag;
     }
 
     public int getSellingPrice(int sellerStat, int buyerStat) {
