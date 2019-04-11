@@ -1,6 +1,7 @@
 package plot;
 
 import plot.people.People;
+import plot.ui.Log;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ public class World {
     };
     private String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public Place[][] map = new Place[WORLD_DIM][WORLD_DIM];
+    private Log log;
 
     public void create() {
         // load items
@@ -257,5 +259,13 @@ public class World {
 
     public int getReputation(People me, Place place) {
         return reputations.get(me).getOrDefault(place, 0);
+    }
+
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    public void log(String s) {
+        this.log.log(s);
     }
 }
