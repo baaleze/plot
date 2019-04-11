@@ -183,4 +183,51 @@ public class People extends Entity {
             knownItems.add(item);
         }
     }
+
+    public String getDescription() {
+        return name;
+    }
+
+    public String getFullDescription() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(name)
+            .append("\n");
+        if (killer != null){
+            sb.append("KILLED BY ").append(killer.name).append("\n");
+        }
+        sb.append("WEALTH : ").append(wealth).append("\n")
+            .append("INVENTORY\n");
+        items.forEach(i -> sb.append(i.name).append("(worth ").append(i.worth).append(")\n"));
+        sb.append("\nGOALS\n");
+        goals.forEach(g -> {
+            sb.append(g.type);
+            if (!g.prerequisites.isEmpty()) {
+                g.prerequisites.forEach(goal -> sb.append("(needs ").append(goal.type).append(" first)"));
+            }
+            sb.append("\n");
+        });
+        sb.append("\nSKILLS\n")
+            .append("Consort ").append(skills.consort).append("\n")
+            .append("Craft ").append(skills.craft).append("\n")
+            .append("Manamgement ").append(skills.management).append("\n")
+            .append("Scout ").append(skills.scout).append("\n")
+            .append("Skirmish ").append(skills.skirmish).append("\n")
+            .append("Sneak ").append(skills.sneak).append("\n")
+            .append("Sway ").append(skills.sway).append("\n")
+            .append("Wreck ").append(skills.wreck).append("\n")
+            .append("\nPERSONNALITY\n")
+            .append("Ambitious ").append(personnality.ambitious).append("\n")
+            .append("Creative ").append(personnality.creative).append("\n")
+            .append("Envious ").append(personnality.envious).append("\n")
+            .append("Glutton ").append(personnality.glutton).append("\n")
+            .append("Greedy ").append(personnality.greedy).append("\n")
+            .append("Honest ").append(personnality.honest).append("\n")
+            .append("Shy ").append(personnality.shy).append("\n")
+            .append("Lust ").append(personnality.lust).append("\n")
+            .append("Vengeful ").append(personnality.vengeful).append("\n")
+            .append("Violent ").append(personnality.violent).append("\n")
+            .append("Racist ").append(personnality.racist).append("\n")
+        ;
+        return sb.toString();
+    }
 }

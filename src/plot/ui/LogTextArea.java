@@ -3,10 +3,11 @@ package plot.ui;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 
-public class LogTextArea extends TextArea implements Log {
+public class LogTextArea extends Label implements Log {
 
     private StringBuffer sb = new StringBuffer();
 
@@ -15,7 +16,7 @@ public class LogTextArea extends TextArea implements Log {
 
         final ContextMenu menu = new ContextMenu();
         menu.getItems().add(createItem("Clear console", e -> {
-            this.clear();
+            this.setText("");
         }));
         this.setContextMenu(menu);
         this.setPrefHeight(200);

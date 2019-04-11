@@ -1,5 +1,6 @@
 package plot.ui;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
@@ -10,15 +11,22 @@ import plot.Place;
 
 public class MapUi extends StackPane {
     private final Place[][] map;
+    private final ObjectProperty<Place> city;
 
-    public MapUi(Place[][] map) {
+    public MapUi(Place[][] map, ObjectProperty<Place> citySelected) {
         this.map = map;
+        this.city = citySelected;
         GridPane gridLayout = new GridPane();
 
         // add each city
         for (int x = 0; x < map.length; x++){
             for (int y = 0; y < map[x].length; y++){
-                gridLayout.add(new PlaceLabel(map[x][y]), x, y);
+                Place p = map[x][y];
+                PlaceLabel placeLabel = new PlaceLabel(p);
+                if (p != null){
+                    placeLabel.setOnMouseClicked(event -> this.city.setValue(p));
+                }
+                gridLayout.add(placeLabel, x, y);
             }
         }
 
@@ -32,6 +40,7 @@ public class MapUi extends StackPane {
     }
 
     private class PlaceLabel extends Label {
+        public static final int DIM = 50;
         private Place place;
         private PlaceToolTip tooltip;
 
@@ -47,7 +56,7 @@ public class MapUi extends StackPane {
             GridPane.setHalignment(this, HPos.CENTER);
             GridPane.setValignment(this, VPos.CENTER);
             this.setWrapText(true);
-            this.setPrefSize(40,40);
+            this.setPrefSize(DIM, DIM);
         }
 
         public void update() {

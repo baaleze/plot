@@ -36,22 +36,26 @@ public class Plot extends Application {
 
         // 1st left is map up and residents list down
         VBox left = new VBox();
-        this.mapUi = new MapUi(world.map);
-        ResidentsPane residents = new ResidentsPane(citySelected);
+        this.mapUi = new MapUi(world.map, citySelected);
+        ResidentsPane residents = new ResidentsPane(citySelected, peopleSelected);
         left.getChildren().addAll(mapUi, residents);
 
         // 2nd is people info
+        PeoplePane peoplePane = new PeoplePane(peopleSelected);
 
         // 3rd is people relation
 
         // 4th is people knowledge
 
+        upper.getChildren().addAll(left, peoplePane);
         // lower is log
         LogTextArea log = new LogTextArea();
         world.setLog(log);
-        root.getChildren().add(log);
+        root.getChildren().addAll(upper, log);
 
         primaryStage.setScene(new Scene(root));
+        primaryStage.setWidth(1000);
+        primaryStage.setHeight(800);
         primaryStage.show();
     }
 

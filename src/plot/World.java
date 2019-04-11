@@ -75,7 +75,7 @@ public class World {
     }
 
     private People newPeople(boolean male, Place place) {
-        People p = new People("Mr " + Util.randomIn(alphabet.split("")), male);
+        People p = new People("Mr " + Util.randomIn(alphabet.split(""))+ Util.randomIn(alphabet.split("")), male);
         if (Math.random() < 0.2) {
             p.items.add(new Item(itemNames));
         }
@@ -164,6 +164,10 @@ public class World {
 
     public void updateRelation(People from, People to, RelationType relationType, int diff, Item item, People thirdParty, boolean knowsLocation) {
         List<Relation> relations = this.relations.get(from);
+        if (relations == null) {
+            relations = new LinkedList<>();
+            this.relations.put(from, relations);
+        }
         for(Relation r: relations) {
             if (r.type == relationType
                 && (item == null || item.equals(r.item))

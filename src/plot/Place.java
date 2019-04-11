@@ -32,7 +32,7 @@ public class Place extends Entity {
     public Place(final String name) {
         this.id = nextId++;
         this.name = name;
-        this.population = ((int) Math.random() * (MAX_POP - MIN_POP)) + MIN_POP;
+        this.population = (int)( Math.random() * (MAX_POP - MIN_POP)) + MIN_POP;
         this.wealth = population - 1;
     }
 
