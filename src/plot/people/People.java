@@ -23,6 +23,7 @@ public class People extends Entity {
 
     public String name;
     public final long id;
+    public boolean male;
 
     public People killer;
 
@@ -47,8 +48,9 @@ public class People extends Entity {
     public List<People> knownPeople = new LinkedList<>();
     public List<People> knownPeopleWithLocation = new LinkedList<>();
 
-    public People(final String name) {
+    public People(final String name, boolean male) {
         this.name = name;
+        this.male = male;
         this.id = nextId++;
         // generate random goals
         if (Math.random() < 0.5) {

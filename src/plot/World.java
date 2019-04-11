@@ -15,8 +15,9 @@ import java.util.stream.Stream;
 public class World {
 
     public static final int COST_TO_TRAVEL = 10;
-    private static final int NB_CITIES = 5;
+    private static final int NB_CITIES = 10;
     private static final int NB_PEOPLE = 25;
+    private static final int WORLD_DIM = 10;
 
     List<People> people = new LinkedList<>();
     List<Place> places = new LinkedList<>();
@@ -27,6 +28,7 @@ public class World {
             "Sewer", "Crypt", "Dungeon", "Castle", "Bank", "Museum", "Tower", "Graveyard"
     };
     private String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public Place[][] map = new Place[WORLD_DIM][WORLD_DIM];
 
     public void create() {
         // load items
@@ -38,17 +40,46 @@ public class World {
                 p.items.put(new Item(itemNames), Util.randomIn(loots));
             }
             places.add(p);
+            // place on map
+            while (true) {
+                int x = Util.randomInt(WORLD_DIM);
+                int y = Util.randomInt(WORLD_DIM);
+                if (map[x][y] == null) { // space is free!
+                    map[x][y] = p;
+                    p.x = x;
+                    p.y = y;
+                    break;
+                }
+            }
         }
         // generate people
-        for(int i = 0; i < NB_PEOPLE; i++) {
-            People p = new People("Mr " + Util.randomIn(alphabet.split("")));
-            if (Math.random() < 0.3) {
-                p.items.add(new Item(itemNames));
+        while (people.size() < NB_PEOPLE) {
+            Place place = Util.randomIn(places);
+            // generate a family
+            People f = newPeople(true, place);
+            People m = newPeople(false, place);
+            updateRelation(f, m, RelationType.MARRIAGE, 3, null, null);
+            updateRelation(m, f, RelationType.MARRIAGE, 3, null, null);
+            updateRelation(f, m, RelationType.LOVER, 5, null, null);
+            updateRelation(m, f, RelationType.LOVER, 5, null, null);
+            int familySize = Util.randomInt(3);
+            for(int n = 0; n < familySize; n++) {
+                // children
+                People child = newPeople(Math.random() < 0.5, place);
+                updateRelation(child, m, RelationType.FAMILY, 5, null, null);
+                updateRelation(m, child, RelationType.FAMILY, 5, null, null);
             }
-            // add to random city
-            Util.randomIn(places).residents.add(p);
-            people.add(p);
         }
+    }
+
+    private People newPeople(boolean male, Place place) {
+        People p = new People("Mr " + Util.randomIn(alphabet.split("")), male);
+        if (Math.random() < 0.2) {
+            p.items.add(new Item(itemNames));
+        }
+        place.residents.add(p);
+        people.add(p);
+        return p;
     }
 
     private void loadItems() {
