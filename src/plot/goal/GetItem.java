@@ -17,7 +17,7 @@ import static plot.action.ActionType.*;
 public class GetItem extends Goal {
 
     private boolean completed = false;
-    private Item target;
+    public Item target;
 
     public GetItem() {
         this.type = GoalType.GET_ITEM;

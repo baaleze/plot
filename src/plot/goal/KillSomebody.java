@@ -15,7 +15,7 @@ import static plot.action.ActionType.*;
 
 public class KillSomebody extends Goal {
 
-    private People target;
+    public People target;
 
     public KillSomebody(People target) {
         this.target = target;

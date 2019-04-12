@@ -14,6 +14,7 @@ public abstract class Goal {
     public GoalType type;
     public People owner;
     public List<Goal> prerequisites = new LinkedList<>();
+    public boolean isDoneBySomeoneElse = false;
 
     public abstract Optional<? extends Action> generateAction(World world, People me);
 

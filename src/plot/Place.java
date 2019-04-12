@@ -1,5 +1,7 @@
 package plot;
 
+import plot.goal.Goal;
+import plot.goal.Job;
 import plot.people.People;
 
 import java.util.HashMap;
@@ -25,6 +27,7 @@ public class Place extends Entity {
     public int wealth;
     public List<People> residents = new LinkedList<>();
     public Map<Item, String> items = new HashMap<>();
+    public List<Job> jobOffers = new LinkedList<>();
 
     public int x;
     public int y;
