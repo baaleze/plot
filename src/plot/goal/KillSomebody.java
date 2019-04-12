@@ -27,12 +27,13 @@ public class KillSomebody extends Goal {
         // action could be Stealing, trading, selling,
         List<ActionType> possibleOptions = new LinkedList<>();
         ActionType[] possibleOptionsIfNothingElse = {
-                KILL
+                KILL, HIRE_TO_KILL
         };
         if (me.isRelativelyGoodIn(me.skills.sneak) || me.isRelativelyGoodIn(me.skills.skirmish)) {
             possibleOptions.add(ActionType.KILL);
+        } else {
+            possibleOptions.add(HIRE_TO_KILL);
         }
-        // TODO add hire hitman
 
         // choose one possible action
         ActionType choice = Util.randomIn(possibleOptions);

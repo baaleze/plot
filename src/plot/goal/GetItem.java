@@ -36,8 +36,17 @@ public class GetItem extends Goal {
         if (me.isRelativelyGoodIn(me.skills.sneak)) {
             possibleOptions.add(ActionType.STEAL_ITEM);
         }
-        if (me.isRelativelyGoodIn(me.skills.craft) && me.isMoreOfAPersonnality(me.personnality.creative)) {
+        if (me.isRelativelyGoodIn(me.skills.craft) && me.isMoreOfAPersonnality(me.personnality.creative) && target == null) {
             possibleOptions.add(CRAFT_ITEM);
+        }
+        if (!me.isRelativelyGoodIn(me.skills.consort) && !me.isRelativelyGoodIn(me.skills.sneak)
+            && !me.isRelativelyGoodIn(me.skills.craft)) {
+            if (target == null) {
+                // this option is only here if there is no target
+                possibleOptions.add(HIRE_TO_CRAFT);
+            }
+            possibleOptions.add(HIRE_TO_BUY);
+            possibleOptions.add(HIRE_TO_STEAL);
         }
 
         // choose one possible action

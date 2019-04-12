@@ -25,6 +25,25 @@ public abstract class Action {
      */
     public static Optional<Action> isGoalNeeded(People me, ActionType choice, World world, Entity target, Goal sourceGoal) {
         switch (choice) {
+            // we must find a people to hire
+            case HIRE_TO_KILL:
+                return hire(me, world, target, sourceGoal, ActionType.KILL);
+            case HIRE_TO_BUY:
+                return hire(me, world, target, sourceGoal, ActionType.BUY_ITEM);
+            case HIRE_TO_CRAFT:
+                return hire(me, world, target, sourceGoal, ActionType.CRAFT_ITEM);
+            case HIRE_TO_GET_SECRET:
+                return hire(me, world, target, sourceGoal, ActionType.GET_SECRET);
+            case HIRE_TO_MUG:
+                return hire(me, world, target, sourceGoal, ActionType.MUG);
+            case HIRE_TO_PILLAGE:
+                return hire(me, world, target, sourceGoal, ActionType.STEAL_VIOLENTLY_PLACE);
+            case HIRE_TO_SELL:
+                return hire(me, world, target, sourceGoal, ActionType.SELL_ITEM);
+            case HIRE_TO_STEAL:
+                return hire(me, world, target, sourceGoal, ActionType.STEAL_PEOPLE);
+            case HIRE_TO_TRADE:
+                return hire(me, world, target, sourceGoal, ActionType.TRADE);
             case STEAL_VIOLENTLY_PLACE:
                 return Optional.of(new Pillage(world.whereIs(me)));
             case STEAL_PLACE:
@@ -160,6 +179,51 @@ public abstract class Action {
                 }
         }
         return Optional.empty();
+    }
+
+    private static Optional<Action> hire(People me, World world, Entity target, Goal sourceGoal, ActionType actionType) {
+        People toHire = findPeopleToHireFor(actionType, me, world, target);
+        if (toHire != null) {
+            // found it
+            return Optional.of(new HireFor(toHire, sourceGoal));
+        } else {
+            // post a job offer
+            return Optional.of(new PostOffer(sourceGoal));
+        }
+    }
+
+    private static People findPeopleToHireFor(ActionType kill, People me, World world, Entity target) {
+        // find someone we know in the city
+        for(People p: me.knownPeopleWithLocation) {
+            if (canDoTheJob(kill, p)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private static boolean canDoTheJob(ActionType kill, People p) {
+        switch (kill) {
+            case KILL:
+                return p.isRelativelyGoodIn(p.skills.sneak) || p.isRelativelyGoodIn(p.skills.skirmish);
+            case MUG:
+            case STEAL_VIOLENTLY_PLACE:
+                return p.isRelativelyGoodIn(p.skills.skirmish);
+            case CRAFT_ITEM:
+                return p.isRelativelyGoodIn(p.skills.craft);
+            case STEAL_ITEM:
+            case STEAL_PLACE:
+            case STEAL_PEOPLE:
+            case GET_SECRET:
+                return p.isRelativelyGoodIn(p.skills.sneak);
+            case BUY_ITEM:
+            case SELL_ITEM:
+            case TRADE:
+                return p.isRelativelyGoodIn(p.skills.consort);
+
+            default: return false;
+        }
+
     }
 
     private static Optional<Action> acquireItem(People me, World world, AcquisitionType type, Entity target, Goal sourceGoal) {

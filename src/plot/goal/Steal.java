@@ -20,13 +20,16 @@ public class Steal extends Goal {
 
     @Override
     public Optional<? extends Action> generateAction(World world, People me) {
-        // TODO depending on target type
-        if (target instanceof Item) {
-            return Action.isGoalNeeded(me, ActionType.STEAL_ITEM, world, target, this);
-        } else if (target instanceof Place) {
-            return Action.isGoalNeeded(me, ActionType.STEAL_PLACE, world, target, this);
+        if (me.isRelativelyGoodIn(me.skills.sneak)) {
+            if (target instanceof Item) {
+                return Action.isGoalNeeded(me, ActionType.STEAL_ITEM, world, target, this);
+            } else if (target instanceof Place) {
+                return Action.isGoalNeeded(me, ActionType.STEAL_PLACE, world, target, this);
+            } else {
+                return Action.isGoalNeeded(me, ActionType.STEAL_PEOPLE, world, target, this);
+            }
         } else {
-            return Action.isGoalNeeded(me, ActionType.STEAL_PEOPLE, world, target, this);
+            return Action.isGoalNeeded(me, ActionType.HIRE_TO_STEAL, world, target, null);
         }
     }
 

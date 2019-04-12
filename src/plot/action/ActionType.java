@@ -2,8 +2,26 @@ package plot.action;
 
 public enum ActionType {
     KILL,
-    HIRE_HITMAN,
-    HIRE_THIEF,
+    HIRE_TO_KILL,
+    HIRE_TO_CRAFT,
+    HIRE_TO_TRADE,
+    HIRE_TO_BUY,
+    HIRE_TO_SELL,
+    HIRE_TO_STEAL,
+    HIRE_TO_PILLAGE,
+    HIRE_TO_MUG,
+    HIRE_TO_GET_SECRET,
+    POST_TO_KILL,
+    POST_TO_CRAFT,
+    POST_TO_TRADE,
+    POST_TO_BUY,
+    POST_TO_SELL,
+    POST_TO_STEAL,
+    POST_TO_MUG,
+    POST_TO_GET_SECRET,
+    POST_TO_PILLAGE,
+
+    FIND_JOB,
     MOVE_TO_CITY,
     PROPOSE_TO,
     STEAL_PLACE,
@@ -15,7 +33,6 @@ public enum ActionType {
     BUY_ITEM,
     DISCREDIT_SOMEBODY,
     GIFT_SOMEBODY,
-    CORRUPT_PLACE,
     HAVE_KID,
     HIDE,
     GO_TO_DUNGEON,
@@ -25,5 +42,5 @@ public enum ActionType {
     RECRUIT_ACCOMPLICE,
     POSTULATE_TO_PATRON,
     SELL_ITEM,
-    STEAL_PEOPLE, LISTEN
+    STEAL_PEOPLE, GET_SECRET, LISTEN
 }

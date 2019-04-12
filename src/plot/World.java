@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 public class World {
 
     public static final int COST_TO_TRAVEL = 10;
-    private static final int NB_CITIES = 10;
+    private static final int NB_CITIES = 8;
     private static final int NB_PEOPLE = 25;
-    private static final int WORLD_DIM = 10;
+    private static final int WORLD_DIM = 8;
 
     List<People> people = new LinkedList<>();
     List<Place> places = new LinkedList<>();

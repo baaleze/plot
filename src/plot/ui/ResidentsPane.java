@@ -32,7 +32,6 @@ public class ResidentsPane extends ScrollPane {
         // clear the people select
         peopleSelect.setValue(null);
         if (p != null) {
-            System.out.println("FUCK " + p.name + p.residents.size());
             p.residents.forEach(r -> {
                 Label l = new Label(r.getDescription());
                 l.setOnMouseClicked((mouseEvent) -> {

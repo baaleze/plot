@@ -5,14 +5,13 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import plot.Place;
 import plot.World;
 import plot.people.People;
-
-import java.awt.*;
 
 public class Plot extends Application {
 
@@ -49,9 +48,12 @@ public class Plot extends Application {
 
         upper.getChildren().addAll(left, peoplePane);
         // lower is log
+        ScrollPane logScroll = new ScrollPane();
+        logScroll.setFitToWidth(true);
         LogTextArea log = new LogTextArea();
         world.setLog(log);
-        root.getChildren().addAll(upper, log);
+        logScroll.setContent(log);
+        root.getChildren().addAll(upper, logScroll);
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setWidth(1000);
