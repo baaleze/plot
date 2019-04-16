@@ -23,6 +23,9 @@ public class SellItem extends Action {
             me.wealth += price;
             place.wealth = Math.max(0, place.wealth - price);
 
+            // give item
+            item.giveItem(me, place);
+
             if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                 world.updateReputation(me, place, 1);
             }

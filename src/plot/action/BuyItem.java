@@ -24,8 +24,7 @@ public class BuyItem extends Action {
                 int price = item.getSellingPrice(people.skills.consort, me.skills.consort);
                 me.loseWealth(price);
                 people.wealth += price;
-                me.items.add(item);
-                people.items.remove(item);
+                item.giveItem(people, me);
 
                 if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                     world.updateRelation(people, me, RelationType.COLLEAGUE, 1, null, null, true);
@@ -35,7 +34,7 @@ public class BuyItem extends Action {
                 }
 
             } else if (people.isMoreOfAPersonnality(people.personnality.greedy) && Util.testStat(people.skills.sway)) {
-                // go stealed!
+                // go stealed! no item is gained
                 int price = item.getSellingPrice(people.skills.sway, me.skills.consort);
                 me.loseWealth(price);
                 people.wealth += price;
@@ -53,8 +52,7 @@ public class BuyItem extends Action {
                 int price = item.getSellingPrice(Place.PLACE_SKILL, me.skills.consort);
                 me.loseWealth(price);
                 place.wealth += price;
-                me.items.add(item);
-                place.items.remove(item);
+                item.giveItem(place, me);
 
                 if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                     world.updateReputation(me, place, 1);

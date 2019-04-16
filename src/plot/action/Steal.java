@@ -29,8 +29,8 @@ public class Steal extends Action {
                     }
                 });
                 if (item != null) {
-                    people.items.remove(item);
-                    me.items.add(item);
+                    // transfer
+                    item.stealItem(people, me);
                 } else {
                     int stolen = Math.min(people.wealth, me.skills.sneak * SNEAK_FACTOR);
                     people.loseWealth(stolen);
@@ -58,8 +58,8 @@ public class Steal extends Action {
                     }
                 });
                 if (item != null) {
-                    place.items.remove(item);
-                    me.items.add(item);
+                    // transfer
+                    item.stealItem(place, me);
                 } else {
                     int stolen = Math.min(place.wealth, me.skills.sneak * SNEAK_FACTOR);
                     place.wealth -= stolen;

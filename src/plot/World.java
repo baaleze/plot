@@ -25,8 +25,8 @@ public class World {
     Map<People, List<Relation>> relations = new HashMap<>();
     Map<People, Map<Place, Integer>> reputations = new HashMap<>();
     List<String> itemNames = new LinkedList<>();
-    private static String[] loots = {
-            "Sewer", "Crypt", "Dungeon", "Castle", "Bank", "Museum", "Tower", "Graveyard"
+    public static String[] loots = {
+            "Castle", "Sewer", "Crypt", "Dungeon",  "Bank", "Museum", "Tower", "Graveyard"
     };
     private String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public Place[][] map = new Place[WORLD_DIM][WORLD_DIM];

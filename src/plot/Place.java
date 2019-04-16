@@ -56,4 +56,7 @@ public class Place extends Entity {
         return this.residents.contains(p);
     }
 
+    public void addItemToDefaultCoffer(Item item) {
+        items.put(item, World.loots[0]);
+    }
 }
