@@ -2,6 +2,7 @@ package plot.action;
 
 import plot.*;
 import plot.goal.KillSomebody;
+import plot.goal.RecoverItem;
 import plot.people.People;
 
 public class Steal extends Action {
@@ -31,6 +32,8 @@ public class Steal extends Action {
                 if (item != null) {
                     // transfer
                     item.stealItem(people, me);
+                    // automatic recover it back goal
+                    people.newGoal(new RecoverItem(item), null);
                 } else {
                     int stolen = Math.min(people.wealth, me.skills.sneak * SNEAK_FACTOR);
                     people.loseWealth(stolen);
@@ -41,9 +44,7 @@ public class Steal extends Action {
                     world.updateReputation(me, world.whereIs(me), -1);
                     world.updateRelation(people, me, RelationType.STOLE, 2, item, null, true);
                     // vengeance
-                    if (people.isMoreOfAPersonnality(people.personnality.vengeful) || people.isRelativelyGoodIn(people.skills.sneak)) {
-                        people.newGoal(new plot.goal.Steal(me), null);
-                    } else if (people.isMoreOfAPersonnality(people.personnality.vengeful) && people.isMoreOfAPersonnality(people.personnality.violent)) {
+                    if (people.isMoreOfAPersonnality(people.personnality.vengeful) && people.isMoreOfAPersonnality(people.personnality.violent)) {
                         people.newGoal(new KillSomebody(me), null);
                     }
                 }

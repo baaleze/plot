@@ -19,6 +19,33 @@ public class BuyItem extends Action {
     @Override
     public void apply(World world, People me) {
         if (people != null) {
+            // check if item is stolen
+            if (!item.rightfulOwners.contains(people) && !Util.testStat(people.skills.sway)) {
+                // busted!
+                People originalOwner = null;
+                if(item.rightfulOwners.get(0) instanceof People) {
+                    originalOwner = (People) item.rightfulOwners.get(0);
+                }
+                world.updateRelation(me, people, RelationType.STOLE, 2, item, originalOwner, true);
+                // do i know the owner ?
+                if (originalOwner != null && me.knownPeopleWithLocation.contains(originalOwner)) {
+                    // I tell him
+                    world.updateRelation(originalOwner, people, RelationType.STOLE, 3, item, null, true);
+                }
+                // no transaction is made
+                // TODO update discredit
+                return;
+            } else if (item.rightfulOwners.size() > 1) { // maybe it was owned by other people
+                for(Entity otherOwner: item.rightfulOwners.subList(0, item.rightfulOwners.size() - 1)) {
+                    if (otherOwner instanceof People && otherOwner.equals(me)) {
+                        // it's mine!!! I take it without paying
+                        item.giveItem(people, me);
+                        world.updateRelation(me, people, RelationType.STOLE, 4, item, null, true);
+                        // TODO update discredit
+                        return;
+                    }
+                }
+            }
             if (Util.testStat(me.skills.consort - people.skills.consort + world.getRelationScore(people, me))) {
                 // success
                 int price = item.getSellingPrice(people.skills.consort, me.skills.consort);

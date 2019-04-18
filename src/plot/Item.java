@@ -56,4 +56,11 @@ public class Item extends Entity {
         to.items.add(this);
     }
 
+    public void confiscate(People me, Place place) {
+        if (me.equals(thief)) {
+            thief = null;
+        }
+        me.items.remove(this);
+        place.addItemToDefaultCoffer(this);
+    }
 }
