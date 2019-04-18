@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,11 +21,11 @@ public class World {
     private static final int NB_PEOPLE = 25;
     private static final int WORLD_DIM = 8;
 
-    List<People> people = new LinkedList<>();
-    List<Place> places = new LinkedList<>();
-    Map<People, List<Relation>> relations = new HashMap<>();
-    Map<People, Map<Place, Integer>> reputations = new HashMap<>();
-    List<String> itemNames = new LinkedList<>();
+    public List<People> people = new LinkedList<>();
+    public List<Place> places = new LinkedList<>();
+    private Map<People, List<Relation>> relations = new HashMap<>();
+    private Map<People, Map<Place, Integer>> reputations = new HashMap<>();
+    private List<String> itemNames = new LinkedList<>();
     public static String[] loots = {
             "Castle", "Sewer", "Crypt", "Dungeon",  "Bank", "Museum", "Tower", "Graveyard"
     };

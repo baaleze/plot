@@ -4,6 +4,7 @@ import plot.*;
 import plot.goal.KillSomebody;
 import plot.goal.RecoverItem;
 import plot.people.People;
+import plot.people.SecretSteal;
 
 public class Steal extends Action {
     private static final int SNEAK_FACTOR = 50;
@@ -29,24 +30,24 @@ public class Steal extends Action {
                         g.setCompleted();
                     }
                 });
+                SecretSteal s;
                 if (item != null) {
                     // transfer
                     item.stealItem(people, me);
+                    // secret
+                    s = me.stolenSomething(people, item, world.whereIs(people), 0, world);
                     // automatic recover it back goal
                     people.newGoal(new RecoverItem(item), null);
                 } else {
                     int stolen = Math.min(people.wealth, me.skills.sneak * SNEAK_FACTOR);
                     people.loseWealth(stolen);
                     me.wealth += stolen;
+                    // secret
+                    s = me.stolenSomething(people, null, world.whereIs(people), stolen, world);
                 }
                 if (!Util.testStat(me.skills.sneak)) {
-                    // got found
-                    world.updateReputation(me, world.whereIs(me), -1);
-                    world.updateRelation(people, me, RelationType.STOLE, 2, item, null, true);
-                    // vengeance
-                    if (people.isMoreOfAPersonnality(people.personnality.vengeful) && people.isMoreOfAPersonnality(people.personnality.violent)) {
-                        people.newGoal(new KillSomebody(me), null);
-                    }
+                    // got found - secret is out!
+                    s.divulgate(world, world.whereIs(me));
                 }
             }
         } else {
@@ -58,17 +59,22 @@ public class Steal extends Action {
                         g.setCompleted();
                     }
                 });
+                SecretSteal s;
                 if (item != null) {
                     // transfer
                     item.stealItem(place, me);
+                    // secret
+                    s = me.stolenSomething(null, item, place, 0, world);
                 } else {
                     int stolen = Math.min(place.wealth, me.skills.sneak * SNEAK_FACTOR);
                     place.wealth -= stolen;
                     me.wealth += stolen;
+                    // secret
+                    s = me.stolenSomething(null, null, place, stolen, world);
                 }
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found
-                    world.updateReputation(me, world.whereIs(me), -2);
+                    s.divulgate(world, place);
                 }
             }
         }

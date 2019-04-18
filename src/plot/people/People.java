@@ -7,7 +7,6 @@ import plot.World;
 import plot.action.Action;
 import plot.goal.GetRich;
 import plot.goal.Goal;
-import plot.goal.GoalType;
 import plot.goal.KillSomebody;
 
 import java.util.LinkedList;
@@ -36,6 +35,9 @@ public class People extends Entity {
     // Goals
     public List<Goal> goals = new LinkedList<>();
 
+    // my secrets
+    public List<Secret> secrets = new LinkedList<>();
+
     // current action
     public Action action;
 
@@ -47,6 +49,7 @@ public class People extends Entity {
     public List<Item> knownItems = new LinkedList<>();
     public List<People> knownPeople = new LinkedList<>();
     public List<People> knownPeopleWithLocation = new LinkedList<>();
+    public List<Secret> knownSecrets = new LinkedList<>();
 
     public People(final String name, boolean male) {
         this.name = name;
@@ -182,6 +185,17 @@ public class People extends Entity {
         if (!knownItems.contains(item)) {
             knownItems.add(item);
         }
+    }
+
+    public SecretKill killedSomeone(People target, World world) {
+        SecretKill secret = new SecretKill(this, target);
+        secrets.add(secret);
+        return secret;
+    }
+    public SecretSteal stolenSomething(People target, Item item, Place place, int money, World world) {
+        SecretSteal secret = new SecretSteal(this, item, target, place != null ? place : world.whereIs(this), money);
+        secrets.add(secret);
+        return secret;
     }
 
     public String getDescription() {
