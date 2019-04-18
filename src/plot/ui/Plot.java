@@ -5,6 +5,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -37,7 +38,9 @@ public class Plot extends Application {
         VBox left = new VBox();
         this.mapUi = new MapUi(world.map, citySelected);
         ResidentsPane residents = new ResidentsPane(citySelected, peopleSelected);
-        left.getChildren().addAll(mapUi, residents);
+        Button passTime = new Button("NEXT MONTH");
+        passTime.setOnMouseClicked(event -> world.update());
+        left.getChildren().addAll(mapUi, residents, passTime);
 
         // 2nd is people info
         PeoplePane peoplePane = new PeoplePane(peopleSelected);
