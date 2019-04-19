@@ -1,10 +1,10 @@
 package plot.action;
 
+import plot.Event;
 import plot.Item;
 import plot.Util;
 import plot.World;
-import plot.goal.Goal;
-import plot.goal.Job;
+import plot.goal.*;
 import plot.people.People;
 
 import java.util.List;
@@ -33,7 +33,20 @@ public class PostOffer extends Action {
             reward = me.wealth;
         }
         jobOffers.add(new Job(me, task, reward, item));
-
+        switch (task.type) {
+            case CRAFT_ITEM:
+                world.addEvent(Event.craft(me, null, ((CraftSomething)task).target, false, true, true, true));
+                break;
+            case KILL_SOMEBODY:
+                world.addEvent(Event.kill(me, null, ((KillSomebody)task).target, false, true, true, true));
+                break;
+            case GET_ITEM:
+                world.addEvent(Event.getItem(me, null, ((GetItem)task).target, false, true, true, true));
+                break;
+            case GET_RICH:
+                world.addEvent(Event.getRich(me, null, false, true, true, true));
+                break;
+        }
     }
 
     @Override

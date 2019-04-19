@@ -21,6 +21,7 @@ public class Plot extends Application {
     private ObjectProperty<Place> citySelected = new SimpleObjectProperty<>();
     private ObjectProperty<People> peopleSelected = new SimpleObjectProperty<>();
     private MapUi mapUi;
+    private LogTextArea log;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -53,7 +54,7 @@ public class Plot extends Application {
         // lower is log
         ScrollPane logScroll = new ScrollPane();
         logScroll.setFitToWidth(true);
-        LogTextArea log = new LogTextArea();
+        this.log = new LogTextArea(peopleSelected, world);
         world.setLog(log);
         logScroll.setContent(log);
         root.getChildren().addAll(upper, logScroll);
@@ -68,5 +69,6 @@ public class Plot extends Application {
         citySelected.setValue(null);
         peopleSelected.setValue(null);
         mapUi.update();
+        log.update();
     }
 }

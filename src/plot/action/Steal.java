@@ -38,12 +38,14 @@ public class Steal extends Action {
                     s = me.stolenSomething(people, item, world.whereIs(people), 0, world);
                     // automatic recover it back goal
                     people.newGoal(new RecoverItem(item), null);
+                    world.addEvent(Event.steal(null, me, people, null, item, 0, false, false, false, false));
                 } else {
                     int stolen = Math.min(people.wealth, me.skills.sneak * SNEAK_FACTOR);
                     people.loseWealth(stolen);
                     me.wealth += stolen;
                     // secret
                     s = me.stolenSomething(people, null, world.whereIs(people), stolen, world);
+                    world.addEvent(Event.steal(null, me, people, null, null, stolen, false, false, false, false));
                 }
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found - secret is out!
@@ -65,12 +67,14 @@ public class Steal extends Action {
                     item.stealItem(place, me);
                     // secret
                     s = me.stolenSomething(null, item, place, 0, world);
+                    world.addEvent(Event.steal(null, me, null, place, item, 0, false, false, false, false));
                 } else {
                     int stolen = Math.min(place.wealth, me.skills.sneak * SNEAK_FACTOR);
                     place.wealth -= stolen;
                     me.wealth += stolen;
                     // secret
                     s = me.stolenSomething(null, null, place, stolen, world);
+                    world.addEvent(Event.steal(null, me, null, place, null, stolen, false, false, false, false));
                 }
                 if (!Util.testStat(me.skills.sneak)) {
                     // got found

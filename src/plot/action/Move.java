@@ -1,5 +1,6 @@
 package plot.action;
 
+import plot.Event;
 import plot.people.People;
 import plot.Place;
 import plot.Util;
@@ -23,6 +24,7 @@ public class Move extends Action {
         start.residents.remove(me);
         target.residents.add(me);
         me.loseWealth(world.dist(start, target) * World.COST_TO_TRAVEL);
+        world.addEvent(Event.moveToCity(me, start, target, false,  true));
     }
 
     @Override

@@ -1,10 +1,10 @@
 package plot.action;
 
+import plot.Event;
 import plot.Item;
 import plot.Util;
 import plot.World;
-import plot.goal.Goal;
-import plot.goal.Job;
+import plot.goal.*;
 import plot.people.People;
 
 public class HireFor extends Action {
@@ -29,7 +29,22 @@ public class HireFor extends Action {
                 reward = me.wealth;
             }
             hiree.newGoal(new Job(me, task, reward, item), null);
-        }
+            switch (task.type) {
+                case CRAFT_ITEM:
+                    world.addEvent(Event.craft(me, hiree, ((CraftSomething)task).target, true, false, false, true));
+                    break;
+                case KILL_SOMEBODY:
+                    world.addEvent(Event.kill(me, hiree, ((KillSomebody)task).target, true, false, false, true));
+                    break;
+                case GET_ITEM:
+                    world.addEvent(Event.getItem(me, hiree, ((GetItem)task).target, true, false, false, true));
+                    break;
+                case GET_RICH:
+                    world.addEvent(Event.getRich(me, hiree, true, false, false, true));
+                    break;
+            }
+
+        } // else he refused
     }
 
     @Override

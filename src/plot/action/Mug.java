@@ -1,5 +1,6 @@
 package plot.action;
 
+import plot.Event;
 import plot.goal.KillSomebody;
 import plot.people.People;
 import plot.RelationType;
@@ -18,6 +19,7 @@ public class Mug extends Action {
     public void apply(World world, People me) {
         // uses skirmish
         if (Util.testStat(me.skills.skirmish - target.skills.skirmish)) {
+            world.addEvent(Event.mug(null, me, target, world.whereIs(me), false, false, true, false));
             // success take half wealth
             me.wealth = target.wealth / 2;
             target.loseWealth(target.wealth / 2);
@@ -32,7 +34,9 @@ public class Mug extends Action {
 
         } else {
             // failure
+            // TODO log failures
             if (Util.testStat(target.skills.skirmish - me.skills.skirmish)) {
+                world.addEvent(Event.kill(null, target, me, false, false, true, false));
                 // I got killed
                 me.killer = target;
                 for(People relative: world.getAllRelatives(me)) {

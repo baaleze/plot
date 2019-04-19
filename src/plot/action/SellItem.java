@@ -48,6 +48,8 @@ public class SellItem extends Action {
             // give item
             item.giveItem(me, place);
 
+            world.addEvent(Event.sellItem(null, me, place, item, false, false, true, false));
+
             if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                 world.updateReputation(me, place, 1);
             }

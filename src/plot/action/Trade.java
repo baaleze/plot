@@ -1,5 +1,6 @@
 package plot.action;
 
+import plot.Event;
 import plot.Place;
 import plot.Util;
 import plot.people.People;
@@ -18,6 +19,7 @@ public class Trade extends Action {
             if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                 world.updateReputation(me, place, 1);
             }
+            world.addEvent(Event.trade(null, me, place, false, false, true, false));
         }
     }
 

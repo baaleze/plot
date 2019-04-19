@@ -32,6 +32,7 @@ public class World {
     private String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public Place[][] map = new Place[WORLD_DIM][WORLD_DIM];
     private Log log;
+    private List<Event> events = new LinkedList<>();
 
     public void create() {
         // load items
@@ -270,7 +271,13 @@ public class World {
         this.log = log;
     }
 
-    public void log(String s) {
-        this.log.log(s);
+    public void addEvent(Event e) {
+        events.add(e);
     }
+
+    public List<Event> getEventsFor(People p) {
+        return events.stream().filter(e -> e.canSee(p)).collect(Collectors.toList());
+    }
+
+
 }

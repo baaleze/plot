@@ -52,6 +52,7 @@ public class BuyItem extends Action {
                 me.loseWealth(price);
                 people.wealth += price;
                 item.giveItem(people, me);
+                world.addEvent(Event.buy(null, me, people, null, item, false, false, false, true));
 
                 if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                     world.updateRelation(people, me, RelationType.COLLEAGUE, 1, null, null, true);
@@ -66,6 +67,8 @@ public class BuyItem extends Action {
                 me.loseWealth(price);
                 people.wealth += price;
                 world.updateRelation(me, people, RelationType.STOLE, 2, null, null, true);
+                world.updateReputation(people, world.whereIs(me), -1);
+                world.addEvent(Event.steal(null, people, me, null, null, price, false, false, true, true));
                 // vengeance
                 if (me.isMoreOfAPersonnality(me.personnality.vengeful) || me.isRelativelyGoodIn(me.skills.sneak)) {
                     me.newGoal(new Steal(people), null);
@@ -80,6 +83,7 @@ public class BuyItem extends Action {
                 me.loseWealth(price);
                 place.wealth += price;
                 item.giveItem(place, me);
+                world.addEvent(Event.buy(null, me, null, place, item, false, false, true, true));
 
                 if (me.isMoreOfAPersonnality(me.personnality.honest)) {
                     world.updateReputation(me, place, 1);

@@ -1,6 +1,7 @@
 package plot.action;
 
 
+import plot.Event;
 import plot.Item;
 import plot.Util;
 import plot.World;
@@ -24,6 +25,7 @@ public class CraftItem extends Action {
         // new item is created!
         me.loseWealth(target.mag * COST_FACTOR);
         me.items.add(target);
+        world.addEvent(Event.craft(null, me, target, false, false, true, false));
     }
 
     @Override

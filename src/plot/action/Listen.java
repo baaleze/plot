@@ -68,6 +68,7 @@ public class Listen extends Action {
                 g.setCompleted();
             }
         });
+        world.addEvent(Event.listenToInfo(me, world.whereIs(me), false, false));
     }
 
     @Override
