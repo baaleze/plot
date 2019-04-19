@@ -38,7 +38,7 @@ public class Item extends Entity {
             rightfulOwners.remove(from);
         }
         rightfulOwners.add(to);
-        if (from instanceof People) {
+        if (to instanceof People) {
             ((People)to).items.add(this);
         } else {
             ((Place)to).addItemToDefaultCoffer(this);
@@ -62,5 +62,10 @@ public class Item extends Entity {
         }
         me.items.remove(this);
         place.addItemToDefaultCoffer(this);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -59,4 +59,9 @@ public class Place extends Entity {
     public void addItemToDefaultCoffer(Item item) {
         items.put(item, World.loots[0]);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -18,7 +18,7 @@ public class LogTextArea extends Label implements Log {
     private final World world;
     private final ObjectProperty<People> people;
     private StringBuffer sb = new StringBuffer();
-    private static int LOG_LIMIT = 20;
+    private static int LOG_LIMIT = 10;
 
     public LogTextArea(ObjectProperty<People> peopleSelected, World w) {
         this.world = w;
@@ -46,7 +46,7 @@ public class LogTextArea extends Label implements Log {
     public void updateLog(List<String> events) {
         sb.setLength(0);
         if (events != null) {
-            events.forEach(s -> sb.append(s).append("\n"));
+            events.subList(Math.max(0,events.size()-LOG_LIMIT), events.size()).forEach(s -> sb.append(s).append("\n"));
         }
         setText(sb.toString());
     }

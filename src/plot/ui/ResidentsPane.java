@@ -33,7 +33,7 @@ public class ResidentsPane extends ScrollPane {
         peopleSelect.setValue(null);
         if (p != null) {
             p.residents.forEach(r -> {
-                Label l = new Label(r.getDescription());
+                Label l = new Label(r.toString());
                 l.setOnMouseClicked((mouseEvent) -> {
                     peopleSelect.setValue(r);
                 });

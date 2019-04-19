@@ -22,6 +22,8 @@ public class Listen extends Action {
     public void apply(World world, People me) {
         // for each known person in the city
         Place myPlace = world.whereIs(me);
+        // TODO FIX CONCURRENT MODIFICATION
+
         me.knownPeopleWithLocation.stream().filter(p -> world.whereIs(p).equals(myPlace)).forEach(p -> {
             // test if we can gather some info about something he knows
             if (Util.testStat(me.skills.consort + world.getRelationScore(p, me))) {

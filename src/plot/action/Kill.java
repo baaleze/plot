@@ -27,7 +27,7 @@ public class Kill extends Action {
             if (Util.testStat(me.skills.sneak - target.skills.sneak)) {
                 // success
                 target.kill(me);
-                world.addEvent(Event.kill(null, me, target, world.whereIs(me), false, false, false, false));
+                world.addEvent(Event.kill(null, me, target, false, false, false, false));
                 // secret
                 SecretKill secret = me.killedSomeone(target, world);
                 if (!Util.testStat(me.skills.sneak)) {
@@ -48,7 +48,7 @@ public class Kill extends Action {
             if (Util.testStat(me.skills.skirmish - target.skills.skirmish)) {
                 // success
                 target.kill(me);
-                world.addEvent(Event.kill(null, me, target, world.whereIs(me), false, false, true, true));
+                world.addEvent(Event.kill(null, me, target, false, false, true, true));
                 // secret
                 SecretKill secret = new SecretKill(me, target);
                 // immediately tell everyone since no stealth
@@ -58,7 +58,7 @@ public class Kill extends Action {
                 if (Util.testStat(target.skills.skirmish - me.skills.skirmish)) {
                     // I got killed - no secret, self defense
                     me.kill(target);
-                    world.addEvent(Event.kill(null, target, me, world.whereIs(me), false, false, true, true));
+                    world.addEvent(Event.kill(null, target, me, false, false, true, true));
                     for(People relative: world.getAllRelatives(me)) {
                         // add or amplify relation
                         world.updateRelation(relative, target, RelationType.KILLED_RELATIVE, 4, null, me);

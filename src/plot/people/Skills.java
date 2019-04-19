@@ -3,7 +3,7 @@ package plot.people;
 import plot.Util;
 
 public class Skills {
-    private static final int MAX_SKILL = 6;
+    private static final int MAX_SKILL = 8;
     public int sway;
     public int consort;
     public int skirmish;

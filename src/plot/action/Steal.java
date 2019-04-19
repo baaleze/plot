@@ -26,7 +26,8 @@ public class Steal extends Action {
             if (Util.testStat(me.skills.sneak - people.skills.sneak)) {
                 // did it
                 me.goals.forEach(g -> {
-                    if (g instanceof plot.goal.Steal && ((plot.goal.Steal)g).target.equals(people) && g.prerequisites.isEmpty()) {
+                    if (g instanceof plot.goal.Steal && ((plot.goal.Steal)g).target != null
+                            && ((plot.goal.Steal)g).target.equals(place) && g.prerequisites.isEmpty()) {
                         g.setCompleted();
                     }
                 });
@@ -57,7 +58,8 @@ public class Steal extends Action {
             if (Util.testStat(me.skills.sneak - place.population / 100)) {
                 // did it
                 me.goals.forEach(g -> {
-                    if (g instanceof plot.goal.Steal && ((plot.goal.Steal)g).target.equals(place) && g.prerequisites.isEmpty()) {
+                    if (g instanceof plot.goal.Steal && ((plot.goal.Steal)g).target != null
+                            && ((plot.goal.Steal)g).target.equals(place) && g.prerequisites.isEmpty()) {
                         g.setCompleted();
                     }
                 });

@@ -113,6 +113,7 @@ public class People extends Entity {
     }
 
     public void decideWhatToDo(final World world) {
+        System.out.println(name + " decides what to do this month");
         while (this.action == null) {
             // only if currently doing nothing
             final Optional<Goal> goal = this.getFirstAchievableGoal();
@@ -121,7 +122,9 @@ public class People extends Entity {
                 final Optional<? extends Action> action = goal.get().generateAction(world, this);
                 this.action = action.orElse(null);
                 // if action is null, can't do it but a new goal was set
-            } // no goal do nothing
+            } else {// no goal do nothing
+                break;
+            }
         }
     }
 
@@ -135,7 +138,7 @@ public class People extends Entity {
 
     public void applyAction(final World world) {
         // finished ?
-        if (this.action.isFinished()) {
+        if (this.action != null && this.action.isFinished()) {
             this.action.apply(world, this);
             // spawn new goals ??
             this.action.spawnGoals(world, this);
@@ -198,7 +201,8 @@ public class People extends Entity {
         return secret;
     }
 
-    public String getDescription() {
+    @Override
+    public String toString() {
         return name;
     }
 

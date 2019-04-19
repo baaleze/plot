@@ -40,7 +40,10 @@ public class Plot extends Application {
         this.mapUi = new MapUi(world.map, citySelected);
         ResidentsPane residents = new ResidentsPane(citySelected, peopleSelected);
         Button passTime = new Button("NEXT MONTH");
-        passTime.setOnMouseClicked(event -> world.update());
+        passTime.setOnMouseClicked(event -> {
+            world.update();
+            update();
+        });
         left.getChildren().addAll(mapUi, residents, passTime);
 
         // 2nd is people info

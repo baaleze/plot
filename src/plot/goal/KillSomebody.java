@@ -47,7 +47,7 @@ public class KillSomebody extends Goal {
     @Override
     public boolean isComplete(World world) {
         // target is dead
-        return target.killer != null;
+        return target != null && target.killer != null;
     }
 
     @Override

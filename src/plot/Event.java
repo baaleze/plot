@@ -22,6 +22,9 @@ public class Event {
     }
 
     public boolean canSee(People p) {
+        if (p == null) {
+            return true;
+        }
         if (forAll) {
             return true;
         }
@@ -153,21 +156,21 @@ public class Event {
                     return String.format("%s has traded in %s", args[0], args[1]);
                 }
             case MUG_PEOPLE:
-                return String.format("%s has mugged in %s", args[0], args[1]);
+                return String.format("%s has mugged %s of % gold", args[0], args[1], amount);
             case KILL_PEOPLE:
                 if (hired) {
                     return String.format("%s has hired %s to kill %s", args[0], args[1], args[2]);
                 } else if (posted) {
                     return String.format("%s has posted a job offer to kill %s", args[0], args[1]);
                 } else {
-                    return String.format("%s has killed %s in %s", args[0], args[1], args[2]);
+                    return String.format("%s has killed %s", args[0], args[1]);
                 }
             case LISTEN_INFO:
                 return String.format("%s has listened for info in %s", args[0], args[1]);
             case MOVE_TO_CITY:
                 return String.format("%s has moved from %s to %s", args[0], args[1], args[2]);
             case PILLAGE_PLACE:
-                return String.format("%s has pillaged in %s", args[0], args[1]);
+                return String.format("%s has pillaged %s in %s", args[0], amount, args[1]);
             case BUY_ITEM_FROM_PEOPLE:
             case BUY_ITEM_FROM_PLACE:
                 return String.format("%s has bought %s from %s", args[0], args[1], args[2]);
@@ -175,7 +178,7 @@ public class Event {
                 return String.format("%s has sold %s in %s", args[0], args[1], args[2]);
             case STOLE_ITEM_FROM_PEOPLE:
             case STOLE_ITEM_FROM_PLACE:
-                    return String.format("%s has stolen %s from %s", args[0], args[1], args[2]);
+                    return String.format("%s has stolen %s from %s", args[0], amount, args[1]);
             case STOLE_MONEY_FROM_PEOPLE:
             case STOLE_MONEY_FROM_PLACE:
                 return String.format("%s has stolen %s gold from %s", args[0], args[1], args[2]);

@@ -13,11 +13,12 @@ import plot.Place;
 public class MapUi extends StackPane {
     private final Place[][] map;
     private final ObjectProperty<Place> city;
+    private final GridPane gridLayout;
 
     public MapUi(Place[][] map, ObjectProperty<Place> citySelected) {
         this.map = map;
         this.city = citySelected;
-        GridPane gridLayout = new GridPane();
+        this.gridLayout = new GridPane();
 
         // add each city
         for (int x = 0; x < map.length; x++){
@@ -35,7 +36,7 @@ public class MapUi extends StackPane {
     }
 
     public void update() {
-        getChildren().forEach(node -> {
+        this.gridLayout.getChildren().forEach(node -> {
             ((PlaceLabel)node).update();
         });
     }
@@ -61,7 +62,9 @@ public class MapUi extends StackPane {
         }
 
         public void update() {
-            tooltip.update();
+            if (tooltip != null) {
+                tooltip.update();
+            }
         }
     }
 

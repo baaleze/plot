@@ -4,7 +4,7 @@ import plot.Util;
 
 public class Personnality {
 
-    private static final int MAX_PERSONNALITY = 6;
+    private static final int MAX_PERSONNALITY = 8;
     public int honest;
     public int violent;
     public int racist;

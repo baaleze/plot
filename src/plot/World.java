@@ -6,10 +6,7 @@ import plot.ui.Log;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -264,7 +261,7 @@ public class World {
     }
 
     public int getReputation(People me, Place place) {
-        return reputations.get(me).getOrDefault(place, 0);
+        return reputations.getOrDefault(me, Collections.emptyMap()).getOrDefault(place, 0);
     }
 
     public void setLog(Log log) {
