@@ -134,7 +134,7 @@ export class Utils {
   static crop<T>(matrix: T[][], size: number): T[][] {
     if (matrix.length > size) {
       // remove elements from each column then remove columns
-      return matrix.map(col => col.slice(0, size)).slice(0, size);
+      return matrix.map((col) => col.slice(0, size)).slice(0, size);
     } else {
       return matrix;
     }

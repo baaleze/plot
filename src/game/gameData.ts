@@ -9,11 +9,12 @@ export class GameData {
   public static getInstance(): GameData {
     if (!GameData.instance) {
       GameData.instance = new GameData();
+      GameData.instance.generate();
     }
     return GameData.instance;
   }
 
-  generate(onDone: () => void): void {
+  private generate(): void {
     const world = new WorldGen().run({
       seaLevel: Config.SEA_LEVEL,
       mountainLevel: Config.MOUNTAIN_LEVEL,
@@ -21,6 +22,5 @@ export class GameData {
       nbNations: 10,
     });
     this.worldInstance = world;
-    onDone();
   }
 }

@@ -10,7 +10,6 @@ export class World {
   public neighbours = new Map<City, City[]>();
   public day = 0;
   public refreshLayer = "";
-  public caravans = new Map<number, Caravan>();
 }
 
 export class TileType {
@@ -39,7 +38,7 @@ export class TileType {
   ];
 
   public static getTileSetId(tileType: string): number {
-    switch(tileType) {
+    switch (tileType) {
       case TileType.CITY:
         return 0;
       case TileType.DIRT:
@@ -129,6 +128,7 @@ export class Nation {
 }
 
 export class City {
+  static nextCityId = 0;
   public port!: Position;
   public rivers: string[] = [];
   public roads: Road[] = [];
@@ -140,7 +140,7 @@ export class City {
   public resources = new Map<Resource, number>();
   public deficits = new Map<Resource, number>();
   public needs = new Map<Resource, number>();
-  public caravans: Caravan[] = [];
+  public id = City.nextCityId++;
 
   constructor(
     public name: string,
@@ -152,6 +152,8 @@ export class City {
 }
 
 export class Road {
+  static nextRoadId = 0;
+  public id = Road.nextRoadId++;
   constructor(
     public from: City,
     public to: City,
@@ -282,42 +284,22 @@ export class Industry {
   ]);
 }
 
-export class Caravan {
-  static nextId = 0;
-  public id: number;
-  public progress = 0;
-  public speed = 1;
-
-  constructor(
-    public name: string,
-    public trade: number,
-    public guard: number,
-    public stealth: number,
-    public nbPeople: number,
-    public position: Position,
-    public nation: Nation,
-    public route: Road,
-    public resourceGo: Resource,
-    public resourceBack: Resource,
-    public stock: number
-  ) {
-    this.id = Caravan.nextId++;
-  }
-}
-
-export class Mission {
-  constructor(public faction: Faction, public targets: Target[]) {}
-}
-
 export class People {
   constructor(
     public name: string,
-    public trade: number,
-    public guard: number,
-    public stealth: number,
-    public nbPeople: number,
+    public stats: Map<string, number>,
     public reputation: Map<Faction, number>,
-    public position: Position
+    public relations: Relation[],
+    public location: City
+  ) {}
+}
+
+export class Relation {
+  constructor(
+    public to: People,
+    public mag: number,
+    public reason: string,
+    public description: string
   ) {}
 }
 

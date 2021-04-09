@@ -11,7 +11,7 @@ export class LoadingScene extends Scene {
     // load assets
     TileType.ALL_TYPES.forEach((name) => this.loadTexture(name));
     this.loadTexture("path");
-    this.load.image("tileset", `img/${Config.TILE_SIZE}/tileset.png`)
+    this.load.image("tileset", `img/${Config.TILE_SIZE}/tileset.png`);
   }
 
   loadTexture(name: string): void {
