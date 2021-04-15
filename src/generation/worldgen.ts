@@ -19,8 +19,9 @@ import { Astar } from "@/generation/astar.service";
 
 const CITY_SCORE_RADIUS = 3;
 const NB_RIVERS_BY_64_MAP = 8;
-const NB_CITY_BY_64_MAP = 6;
+const NB_CITY_BY_64_MAP = 10;
 const EMPTY_BORDER = 0.1;
+const MAX_DIST_FOR_ROAD = 60;
 
 const nationColors = [
   [30, 255, 30],
@@ -147,7 +148,7 @@ export class WorldGen {
             city.position.y,
             c.position.x,
             c.position.y
-          ) < 75
+          ) < MAX_DIST_FOR_ROAD
         ) {
           // is sea route, start and end point must be on sea
           if (seaRoute) {
@@ -427,7 +428,7 @@ export class WorldGen {
     const scan = Utils.scanAround(map, x, y, CITY_SCORE_RADIUS);
     // different biomes around
     // combine
-    return minDist * 2 + scan.rivers.length * 10 + scan.biomes.length * 10;
+    return minDist * 5 + scan.rivers.length * 10 + scan.biomes.length * 10;
   }
 
   getTileType(

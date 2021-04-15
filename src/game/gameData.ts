@@ -19,7 +19,7 @@ export class GameData {
       seaLevel: Config.SEA_LEVEL,
       mountainLevel: Config.MOUNTAIN_LEVEL,
       worldSize: Config.WORLD_SIZE,
-      nbNations: 10,
+      nbNations: 4,
     });
     this.worldInstance = world;
   }

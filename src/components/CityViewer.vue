@@ -1,5 +1,5 @@
 <template>
-  <div v-if="city !== undefined">
+  <div v-if="city !== undefined && city.name !== ''">
     <h3>
       <b>{{ city.name }}</b> of Nation {{ city.nation.name }} [{{ city.position.x }},{{
         city.position.y
@@ -28,44 +28,44 @@
       </div>
       <div>
         Resources:<br />
-        <table>
-          <tr>
-            <th>Resource</th>
-            <th v-for="r of res" :key="r">
-              {{ getResourceName(r) }}
-            </th>
-          </tr>
-          <tr>
-            <th>Stock</th>
-            <td v-for="r of res" :key="r">
+        <b-table-simple dark responsive="true">
+          <b-tr>
+            <b-th>Resource</b-th>
+            <b-th v-for="r of res" :key="r">
+              <img class="resource" :src="'/icons/'+getResourceName(r)+'.svg'" >
+            </b-th>
+          </b-tr>
+          <b-tr>
+            <b-th>Stock</b-th>
+            <b-td v-for="r of res" :key="r">
               {{ city.resources.get(r) }}
-            </td>
-          </tr>
-          <tr>
-            <th>Production</th>
-            <td v-for="r of res" :key="r">
+            </b-td>
+          </b-tr>
+          <b-tr>
+            <b-th>Production</b-th>
+            <b-td v-for="r of res" :key="r">
               {{ city.production.get(r) }}
-            </td>
-          </tr>
-          <tr>
-            <th>Demand</th>
-            <td v-for="r of res" :key="r">
+            </b-td>
+          </b-tr>
+          <b-tr>
+            <b-th>Demand</b-th>
+            <b-td v-for="r of res" :key="r">
               {{ city.needs.get(r) }}
-            </td>
-          </tr>
-          <tr>
-            <th>Provided</th>
-            <td
+            </b-td>
+          </b-tr>
+          <b-tr>
+            <b-th>Provided</b-th>
+            <b-td
               v-for="r of res"
               :key="r"
-              :class="{ danger: city.deficits.get(r) > 0 }"
+              :variant="city.deficits.get(r) > 0 ? 'danger' : ''"
             >
               <span v-if="city.needs.get(r) !== undefined">{{
                 city.needs.get(r) - city.deficits.get(r)
               }}</span>
-            </td>
-          </tr>
-        </table>
+            </b-td>
+          </b-tr>
+        </b-table-simple>
       </div>
     </div>
   </div>
@@ -84,7 +84,7 @@ export default class CityViewer extends Vue {
   }
 
   getResourceName(r: Resource): string {
-    return Resource[r];
+    return Resource[r].toLowerCase();
   }
 
   getMag(): number {
@@ -94,4 +94,8 @@ export default class CityViewer extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.resource {
+  width: 25px;
+}
+</style>

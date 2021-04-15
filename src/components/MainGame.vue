@@ -2,14 +2,15 @@
   <div>
     <div id="phaser-container"></div>
     <div id="ui">
-      <b-row id="action-menu"></b-row>
-      <b-row id="intel">
-        <b-tabs content-class="mt-3">
+      <div id="action-menu"></div>
+      <div id="intel">
+        <b-tabs>
           <b-tab title="Cities" active>
             <b-row id="intel">
               <b-col id="city-list" class="col-3">
                 <b-list-group>
                   <b-list-group-item
+                    :style="{ color: getNationColor(city) }"
                     :active="selectedCity.id === city.id"
                     @click="selectCity(city)"
                     button
@@ -26,7 +27,7 @@
           </b-tab>
           <b-tab title="People"><p>I'm the second tab</p></b-tab>
         </b-tabs>
-      </b-row>
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +41,7 @@ import { Config } from "@/constants/conf";
 import { GameData } from "@/game/gameData";
 import { City, Position } from "@/game/model/models";
 import CityViewer from "./CityViewer.vue";
+import { Utils } from "@/utils";
 @Component({
   components: {
     CityViewer
@@ -53,7 +55,9 @@ export default class MainGame extends Vue {
   public selectedCity = new City('', 0, [], new Position(0,0), []);
 
   mounted(): void {
-    this.cities = this.gameData.worldInstance.cities;
+    this.cities = this.gameData.worldInstance.cities.map(c => c).sort((a, b) => {
+      return a.nation.name > b.nation.name ? 1 : -1
+    });
     this.phaser = new Game({
       parent: "phaser-container",
       type: AUTO,
@@ -65,6 +69,10 @@ export default class MainGame extends Vue {
 
   selectCity(city: City): void {
     this.selectedCity = city;
+  }
+
+  getNationColor(city: City): string {
+    return Utils.colorString(city.nation.color.map(c => c / 2));
   }
 }
 </script>
@@ -80,5 +88,8 @@ export default class MainGame extends Vue {
 }
 #ui {
   float: right;
+}
+#intel {
+  width: 95%;
 }
 </style>
