@@ -3,10 +3,11 @@
     <div id="phaser-container"></div>
     <div id="ui">
       <div id="action-menu">
-        <b-button @click="save()">SAVE</b-button>
-        <b-button @click="load()">LOAD</b-button>
+        <b-button @click="generate()">GENERATE NEW WORLD</b-button>
+        <b-button @click="load()">LOAD SAVED WORLD</b-button>
+        <b-button @click="save()">SAVE CURRENT WORLD</b-button>
       </div>
-      <div id="intel">
+      <div id="intel"  v-if="cities.length > 0">
         <b-tabs>
           <b-tab title="Cities" active>
             <b-row id="intel">
@@ -58,11 +59,9 @@ export default class MainGame extends Vue {
   public cities: City[] = [];
   public selectedCity = new City('', 0, [], new Position(0,0), []);
 
-  mounted(): void {
-    this.resetGame();
-  }
-
   resetGame(): void {
+    this.selectedCity = new City('', 0, [], new Position(0,0), []);
+    this.selectedCity.id = -1;
     this.cities = Array.from(this.gameData.worldInstance.cities.values()).sort((a, b) => {
       return a.nation > b.nation ? 1 : -1
     });
@@ -93,6 +92,10 @@ export default class MainGame extends Vue {
   }
   load(): void {
     this.gameData.worldInstance = Saving.load(localStorage.getItem("worldsave")!);
+    this.resetGame();
+  }
+  generate(): void {
+    this.gameData.generate();
     this.resetGame();
   }
 }
