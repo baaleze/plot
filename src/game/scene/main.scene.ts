@@ -1,6 +1,6 @@
 import { Config } from "@/constants/conf";
 import { Utils } from "@/utils";
-import { Scene, GameObjects, Tilemaps } from "phaser";
+import { Scene, GameObjects, Tilemaps, BlendModes } from "phaser";
 import { GameData } from "../gameData";
 import { CityEvolution } from "../livingworld/city.evolution";
 import { Road, Tile, TileType } from "../model/models";
@@ -14,12 +14,29 @@ export class MainScene extends Scene {
   }
 
   create(): void {
-    this.buildTileMap();
+    this.buildHeightMap();
+    this.drawMap();
     this.drawRoads();
     CityEvolution.updateCities(this.gameData.worldInstance);
   }
 
-  buildTileMap(): void {
+  buildHeightMap(): void {
+    // create a canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = Config.WORLD_SIZE;
+    canvas.height = Config.WORLD_SIZE;
+    const cx = canvas.getContext('2d');
+    if (cx) {
+      this.gameData.worldInstance.map.forEach((col, x) => col.forEach((tile, y) => {
+        const grey = tile.altitude / 2 + 127;
+        cx.fillStyle = Utils.colorString([grey, grey, grey]);
+        cx.fillRect(x, y, 1, 1);
+      }));
+      this.textures.addCanvas('heightmap', canvas);
+    }
+  }
+
+  drawMap(): void {
     // build the tile map from scratch
     this.tileMap = this.make.tilemap({
       tileHeight: Config.TILE_SIZE,
@@ -36,6 +53,10 @@ export class MainScene extends Scene {
         mapLayer.putTileAt(TileType.getTileSetId(tile.type), x, y);
       });
     });
+    // add the heightmap
+    const heightMap = this.add.image(Config.WORLD_SIZE * Config.TILE_SIZE / 2,  Config.WORLD_SIZE * Config.TILE_SIZE / 2,'heightmap');
+    heightMap.scale = Config.TILE_SIZE;
+    heightMap.blendMode = BlendModes.MULTIPLY;
   }
 
   drawRoads(): void {

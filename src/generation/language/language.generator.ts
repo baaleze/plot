@@ -1,15 +1,17 @@
 import { Utils } from "@/utils";
 
 // const allConsonants = 'bcdfghjklmnpqrstvwxyz'.split('');
-const allConsonants = "bbccccdddfffghhjkllllllmmmmnnnnnpppqrrrrrrsssssstttttvwwxz".split(
+const allConsonants = "bccccccddfffgghhhhhjkllllllmmmmmnnnnnppqrrrrrrsssssstttttvwwxzzzz".split(
   ""
 );
 const diacConsonants = "čçšž".split("");
 // const allVowels = 'aeiouyàéèâêôîûëäïöüòìùỳŷÿãåøæœ'.split('');
-const allVowels = "aaaeeeiiooouy".split("");
+const allVowels = "aaaaaeeeeeeiiooooouuuy".split("");
 const diacVowels = "àéèâêôîûëäïöüòìùỳŷÿãåøæœ".split("");
-const syllabePatterns = ["v", "cv", "cvc", "cvc", "cvc", "ccv", "ckv", "vv"];
+const syllabePatterns = ["v", "cv", "cvc", "cvc", "cvc", "ccv", "vv", "vc"];
 const wordPatterns = [
+  "w",
+  "w",
   "w",
   "w w",
   "w w w",
@@ -19,14 +21,12 @@ const wordPatterns = [
   "w-w",
   "w w",
   "w'w",
-  "w'w",
   "w-w",
   "w'w",
   "w-w-w",
-  "ww",
   "ww'w",
 ];
-const NUM_MAX_DIAC_VOWELS = 4;
+const NUM_MAX_DIAC_VOWELS = 2;
 const NUM_COMMON_SYLLABE = 18;
 const NUM_WORD_PATTERNS = 2;
 const NUM_WORD_BASE = 100;
@@ -40,10 +40,10 @@ export class LanguageGenerator {
   ];
   public consonantProbas = new Map<string, number>();
   public vowelProbas = new Map<string, number>();
-  public syllabes: Map<string, number>[];
-  public wordPatterns: string[][];
+  public syllabes: Map<string, number>[] = [];
+  public wordPatterns: string[][] = [];
 
-  constructor() {
+  init() {
     this.chooseLettersProbas();
     this.syllabes = this.generateCommonSyllabes(this.types);
     this.wordPatterns = this.types.map((t) => this.generateWordPatterns());

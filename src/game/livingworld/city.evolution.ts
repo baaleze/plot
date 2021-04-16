@@ -24,14 +24,14 @@ export class CityEvolution {
 
   static getRandomTradeRoute(
     world: World
-  ): { resource: Resource; from: City; to: City } | undefined {
+  ): { resource: Resource; from: number; to: number } | undefined {
     // get all cities with enough access to spawn caravans and pick one
-    const city = Utils.randomInArray(world.cities);
+    const city = Utils.randomInArray(Array.from(world.cities.values()));
 
     // now to find which resource to trade
     const possibleResources = Array.from(city.production.keys()).filter((res) =>
       // filter resources that are needed by neighbors
-      city.roads.some((r) => r.to.needs.has(res))
+      city.roads.some((r) => world.cities.get(r.to)?.needs.has(res))
     );
     let resourceToTrade: Resource;
     if (possibleResources.length > 0) {
@@ -42,9 +42,9 @@ export class CityEvolution {
     }
 
     // choose a city to send the resource to
-    let cityToTrade: City;
+    let cityToTrade: number;
     const possibleCities = city.roads.filter((r) =>
-      r.to.needs.has(resourceToTrade)
+      world.cities.get(r.to)?.needs.has(resourceToTrade)
     );
     if (possibleCities.length > 0) {
       cityToTrade = Utils.randomInArray(possibleCities).to;
@@ -52,26 +52,27 @@ export class CityEvolution {
       return undefined;
     } else {
       // pick random one
-      cityToTrade = Utils.randomInArray(world.cities.filter((c) => c !== city));
+      cityToTrade = Utils.randomInArray(Array.from(world.cities.keys()).filter(id => id !== city.id));
     }
 
     // LETS GOOOOOOO
     return {
       resource: resourceToTrade,
-      from: city,
+      from: city.id,
       to: cityToTrade,
     };
   }
 
   static updateCities(world: World): void {
+    const cityArray = Array.from(world.cities.values());
     // Update access for every city
-    world.cities.forEach(
+    cityArray.forEach(
       (city) => (city.access = CityEvolution.computeAccess(city, world))
     );
 
-    world.cities.forEach((city) => {
+    cityArray.forEach((city) => {
       // get best production for each resource
-      const bestProd = CityEvolution.getBestProd(world.cities, city);
+      const bestProd = CityEvolution.getBestProd(cityArray, city);
 
       // check for needs
       const deficits = new Map<Resource, number>();

@@ -2,7 +2,10 @@
   <div>
     <div id="phaser-container"></div>
     <div id="ui">
-      <div id="action-menu"></div>
+      <div id="action-menu">
+        <b-button @click="save()">SAVE</b-button>
+        <b-button @click="load()">LOAD</b-button>
+      </div>
       <div id="intel">
         <b-tabs>
           <b-tab title="Cities" active>
@@ -35,13 +38,14 @@
 <script lang="ts">
 import { AUTO, Game } from "phaser";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { LoadingScene } from "@/game/scene/loading";
-import { MainScene } from "@/game/scene/main";
+import { LoadingScene } from "@/game/scene/loading.scene";
+import { MainScene } from "@/game/scene/main.scene";
 import { Config } from "@/constants/conf";
 import { GameData } from "@/game/gameData";
 import { City, Position } from "@/game/model/models";
 import CityViewer from "./CityViewer.vue";
 import { Utils } from "@/utils";
+import { Saving } from "@/game/saving";
 @Component({
   components: {
     CityViewer
@@ -55,9 +59,16 @@ export default class MainGame extends Vue {
   public selectedCity = new City('', 0, [], new Position(0,0), []);
 
   mounted(): void {
-    this.cities = this.gameData.worldInstance.cities.map(c => c).sort((a, b) => {
-      return a.nation.name > b.nation.name ? 1 : -1
+    this.resetGame();
+  }
+
+  resetGame(): void {
+    this.cities = Array.from(this.gameData.worldInstance.cities.values()).sort((a, b) => {
+      return a.nation > b.nation ? 1 : -1
     });
+    if (this.phaser) {
+      this.phaser.destroy(true);
+    }
     this.phaser = new Game({
       parent: "phaser-container",
       type: AUTO,
@@ -72,7 +83,17 @@ export default class MainGame extends Vue {
   }
 
   getNationColor(city: City): string {
-    return Utils.colorString(city.nation.color.map(c => c / 2));
+    const nations = this.gameData.worldInstance.nations;
+    const nation = nations.get(city.nation)!;
+    return Utils.colorString(nation.color.map(c => c / 2));
+  }
+
+  save(): void {
+    localStorage.setItem("worldsave", Saving.save(this.gameData.worldInstance));
+  }
+  load(): void {
+    this.gameData.worldInstance = Saving.load(localStorage.getItem("worldsave")!);
+    this.resetGame();
   }
 }
 </script>

@@ -1,15 +1,14 @@
 import { LanguageGenerator } from "@/generation/language/language.generator";
 
 export class World {
-  public cities!: City[];
+  public cities!: Map<number, City>;
   public rivers!: string[];
-  public people!: People[];
-  public factions!: Faction[];
+  public people!: Map<number, People>;
+  public factions!: Map<number, Faction>;
   public map!: Tile[][];
-  public nations!: Nation[];
-  public neighbours = new Map<City, City[]>();
+  public nations!: Map<number, Nation>;
+  public neighbours = new Map<number, number[]>();
   public day = 0;
-  public refreshLayer = "";
 }
 
 export class TileType {
@@ -69,8 +68,8 @@ export class Tile {
   public isRoad = false;
   public isSeaRoad = false;
   public waterFlow = 0;
-  public riverName!: string;
-  public region!: City;
+  public riverName = "";
+  public cityId = -1;
   public isFrontier = false;
 
   constructor(
@@ -119,10 +118,15 @@ export class Node {
   ) {}
 }
 export class Nation {
+  private static nextNationId = 0;
+  public id = Nation.nextNationId++;
   public lang = new LanguageGenerator();
-  public name: string;
+  public name!: string;
 
-  constructor(public color: number[]) {
+  constructor(public color: number[]) {}
+
+  public init(): void {
+    this.lang.init();
     this.name = this.lang.generateName("city");
   }
 }
@@ -132,7 +136,7 @@ export class City {
   public port!: Position;
   public rivers: string[] = [];
   public roads: Road[] = [];
-  public nation!: Nation;
+  public nation!: number;
   public access = 5;
   public stability = 0;
   public growth = 0;
@@ -155,9 +159,9 @@ export class Road {
   static nextRoadId = 0;
   public id = Road.nextRoadId++;
   constructor(
-    public from: City,
-    public to: City,
-    public path: Node[],
+    public from: number,
+    public to: number,
+    public path: Position[],
     public cost: number
   ) {}
 }
@@ -285,18 +289,20 @@ export class Industry {
 }
 
 export class People {
+  static nextPeopleId = 0;
+  public id = People.nextPeopleId++;
   constructor(
     public name: string,
     public stats: Map<string, number>,
-    public reputation: Map<Faction, number>,
+    public reputation: Map<number, number>,
     public relations: Relation[],
-    public location: City
+    public location: number
   ) {}
 }
 
 export class Relation {
   constructor(
-    public to: People,
+    public to: number,
     public mag: number,
     public reason: string,
     public description: string
@@ -304,9 +310,11 @@ export class Relation {
 }
 
 export class Faction {
+  static nextFactionId = 0;
+  public id = Faction.nextFactionId++;
   constructor(
     public name: string,
-    public reputation: Map<Faction, number>,
+    public reputation: Map<number, number>,
     public wealth: number,
     public members: number
   ) {}

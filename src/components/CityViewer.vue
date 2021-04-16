@@ -13,7 +13,7 @@
       </span>
     </h2>
     <div>
-      Roads to <span v-for="r of city.roads" :key="r.id">{{ r.to.name }}//</span>
+      Roads to <span v-for="r of city.roads" :key="r.id">{{ r.to }}//</span>
     </div>
     <div v-if="city.industries">
       <div>

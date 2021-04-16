@@ -51,12 +51,14 @@ export class WorldGen {
   }): World {
     // build the world!!!
     const world = new World();
-    world.nations = [];
+    world.nations = new Map<number, Nation>();
+    world.cities = new Map<number, City>();
 
     // generate nations
     for (let n = 0; n < data.nbNations; n++) {
       const nation = new Nation(nationColors[n]);
-      world.nations.push(nation);
+      nation.init();
+      world.nations.set(nation.id, nation);
     }
 
     // terrain
@@ -78,6 +80,9 @@ export class WorldGen {
 
     // regions
     this.buildRegions(world);
+
+    // clean
+    this.clean(world);
 
     return world;
   }
@@ -126,12 +131,12 @@ export class WorldGen {
 
   buildRoads(world: World): void {
     // land route
-    this.buildRoadsRecursive(world.map, world.cities, false);
+    this.buildRoadsRecursive(world.map, Array.from(world.cities.values()), false);
     // sea route
     this.buildRoadsRecursive(
       world.map,
       // only cities with SEA next to them
-      world.cities.filter((c) => c.port !== undefined),
+      Array.from(world.cities.values()).filter((c) => c.port !== undefined),
       true
     );
   }
@@ -156,13 +161,13 @@ export class WorldGen {
             if (path && path.length > 0) {
               path.forEach((p) => (map[p.x][p.y].isSeaRoad = true));
               city.roads.push(
-                new Road(city, c, path, path ? path[path.length - 1].g : -1)
+                new Road(city.id, c.id, path.map(n => new Position(n.x, n.y)), path ? path[path.length - 1].g : -1)
               );
               c.roads.push(
                 new Road(
-                  c,
-                  city,
-                  path.reverse(),
+                  c.id,
+                  city.id,
+                  path.reverse().map(n => new Position(n.x, n.y)),
                   path ? path[path.length - 1].g : -1
                 )
               );
@@ -176,9 +181,9 @@ export class WorldGen {
             );
             if (path && path.length > 0) {
               path.forEach((p) => (map[p.x][p.y].isRoad = true));
-              city.roads.push(new Road(city, c, path, path[path.length - 1].g));
+              city.roads.push(new Road(city.id, c.id, path.map(n => new Position(n.x, n.y)), path[path.length - 1].g));
               c.roads.push(
-                new Road(c, city, path.reverse(), path[path.length - 1].g)
+                new Road(c.id, city.id, path.reverse().map(n => new Position(n.x, n.y)), path[path.length - 1].g)
               );
             }
           }
@@ -208,7 +213,8 @@ export class WorldGen {
       map[pos.x][pos.y].type = TileType.CITY;
       cities.push(this.createCityFromSpot(map, pos, "" + r));
     }
-    world.cities = cities;
+    // put them in the map
+    cities.forEach(c => world.cities.set(c.id, c));
   }
 
   createCityFromSpot(map: Tile[][], pos: Position, name: string): City {
@@ -246,9 +252,9 @@ export class WorldGen {
     // put the neighbors of all cities in the queue
     world.cities.forEach((city) => {
       // init neighbours
-      world.neighbours.set(city, []);
+      world.neighbours.set(city.id, []);
       Utils.getNeighbors(world.map, city.position).forEach((n) => {
-        n.region = city;
+        n.cityId = city.id;
         queue.push({
           t: n,
           score: this.getMovementScore(
@@ -263,22 +269,22 @@ export class WorldGen {
       // next is one with lowest score
       const next = queue.pop();
       Utils.getNeighbors(world.map, next.t.position).forEach((n) => {
-        if (!n.region) {
+        if (n.cityId === -1) {
           // not yet any region
-          n.region = next.t.region;
+          n.cityId = next.t.cityId;
           queue.push({
             t: n,
             score: next.score + this.getMovementScore(next.t, n),
           });
-        } else if (n.region !== next.t.region) {
+        } else if (n.cityId !== next.t.cityId) {
           next.t.isFrontier = true;
           n.isFrontier = true;
           // mark the regions as neighbours
-          if (world.neighbours.get(next.t.region)?.indexOf(n.region) === -1) {
-            world.neighbours.get(next.t.region)?.push(n.region);
+          if (world.neighbours.get(next.t.cityId)?.indexOf(n.cityId) === -1) {
+            world.neighbours.get(next.t.cityId)?.push(n.cityId);
           }
-          if (world.neighbours.get(n.region)?.indexOf(next.t.region) === -1) {
-            world.neighbours.get(n.region)?.push(next.t.region);
+          if (world.neighbours.get(n.cityId)?.indexOf(next.t.cityId) === -1) {
+            world.neighbours.get(n.cityId)?.push(next.t.cityId);
           }
         }
       });
@@ -287,19 +293,21 @@ export class WorldGen {
     const cityQueue = new PriorityQueue<City>(
       (a, b) => a.population > b.population
     );
+    const cityArray = Array.from(world.cities.values());
     world.nations.forEach((nation) => {
       const city = Utils.randomInArray(
-        world.cities.filter((c) => c.nation === undefined)
+        cityArray.filter((c) => c.nation === undefined)
       );
       if (city) {
-        city.nation = nation;
+        city.nation = nation.id;
       }
     });
-    world.cities
+    cityArray
       .filter((c) => c.nation !== undefined)
       .forEach((city) => {
-        world.neighbours.get(city)?.forEach((neigh) => {
-          if (!neigh.nation) {
+        world.neighbours.get(city.id)?.forEach((neighId) => {
+          const neigh = world.cities.get(neighId);
+          if (neigh && neigh.nation === undefined) {
             neigh.nation = city.nation;
             cityQueue.push(neigh);
           }
@@ -307,17 +315,19 @@ export class WorldGen {
       });
     while (!cityQueue.isEmpty()) {
       const nextCity = cityQueue.pop();
-      world.neighbours.get(nextCity)?.forEach((neigh) => {
-        if (!neigh.nation) {
+      world.neighbours.get(nextCity.id)?.forEach((neighId) => {
+        const neigh = world.cities.get(neighId);
+        if (neigh && neigh.nation === undefined) {
           neigh.nation = nextCity.nation;
           cityQueue.push(neigh);
         }
       });
     }
     world.cities.forEach((c) => {
-      c.name = c.nation.lang.generateName("city");
+      const nation = world.nations.get(c.nation)!;
+      c.name = nation.lang.generateName("city")!;
       c.rivers = c.rivers.map((r) =>
-        this.nameRiver(r, c.nation.lang, world.map)
+        this.nameRiver(r, nation.lang, world.map)
       );
     });
   }
@@ -325,7 +335,7 @@ export class WorldGen {
   getMovementScore(from: Tile, to: Tile): number {
     return (
       1 +
-      (to.riverName ? 2 : 0) +
+      (to.riverName !== "" ? 2 : 0) +
       (from.altitude - to.altitude) +
       (to.type === TileType.SEA ? 5 : 0)
     );
@@ -470,7 +480,7 @@ export class WorldGen {
     while (!finished && steps < 10000) {
       steps++;
       current.type = TileType.RIVER;
-      if (!current.riverName) {
+      if (current.riverName === "") {
         current.riverName = name;
       }
       current.waterFlow += waterFlow++; // add flow to point's existing flow and increment flow
@@ -541,5 +551,10 @@ export class WorldGen {
       t = Utils.randomInArray(same);
     }
     return t;
+  }
+
+  clean(world: World): void {
+    const toDelete = Array.from(world.cities.values()).filter(c => c.roads.length === 0);
+    toDelete.forEach(c => world.cities.delete(c.id));
   }
 }
