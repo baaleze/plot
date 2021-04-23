@@ -1,4 +1,5 @@
 import { LanguageGenerator } from "@/generation/language/language.generator";
+import { Utils } from "@/utils";
 
 export class World {
   public cities!: Map<number, City>;
@@ -122,6 +123,11 @@ export class Nation {
   public id = Nation.nextNationId++;
   public lang = new LanguageGenerator();
   public name!: string;
+  // factions
+  public council!: number;
+  public army!: number;
+  public spies!: number;
+  public bandits: number[] = [];
 
   constructor(public color: number[]) {}
 
@@ -133,10 +139,23 @@ export class Nation {
 
 export class City {
   static nextCityId = 0;
+  // surroundings
   public port!: Position;
   public rivers: string[] = [];
   public roads: Road[] = [];
+  // nation
   public nation!: number;
+  // factions
+  public guard!: number;
+  public council!: number;
+  public spies!: number;
+  public mercenaries: number[] = [];
+  public merchantGuild!: number;
+  public builderGuild!: number;
+  public mafia!: number;
+  public gangs: number[] = [];
+  public syndicates = new Map<IndustryName, number>();
+  // stats
   public access = 5;
   public stability = 0;
   public growth = 0;
@@ -191,101 +210,6 @@ export class Industry {
     public needs: Demand[],
     public produces: Demand[]
   ) {}
-
-  static industries = new Map<IndustryName, Industry>([
-    [
-      "Woodcutting",
-      new Industry(
-        "Woodcutting",
-        [new Demand(Resource.TOOLS, (s) => Math.max(0, s - 1))],
-        [new Demand(Resource.WOOD, (s) => s + 1)]
-      ),
-    ],
-    [
-      "Metal",
-      new Industry(
-        "Metal",
-        [new Demand(Resource.TOOLS, (s) => s)],
-        [new Demand(Resource.METAL, (s) => s)]
-      ),
-    ],
-    [
-      "Stone",
-      new Industry(
-        "Stone",
-        [new Demand(Resource.TOOLS, (s) => Math.max(0, s - 1))],
-        [new Demand(Resource.STONE, (s) => s)]
-      ),
-    ],
-    [
-      "Farm",
-      new Industry(
-        "Farm",
-        [
-          new Demand(Resource.MACHINE, (s) => Math.max(0, s - 1)),
-          new Demand(Resource.CATTLE, (s) => Math.max(0, s - 1)),
-        ],
-        [new Demand(Resource.FOOD, (s) => s + 1)]
-      ),
-    ],
-    [
-      "Cotton",
-      new Industry(
-        "Cotton",
-        [new Demand(Resource.TOOLS, (s) => Math.max(0, s - 1))],
-        [new Demand(Resource.COTTON, (s) => s + 1)]
-      ),
-    ],
-    [
-      "Cattle",
-      new Industry(
-        "Cattle",
-        [new Demand(Resource.FOOD, (s) => Math.max(0, s - 1))],
-        [new Demand(Resource.CATTLE, (s) => s)]
-      ),
-    ],
-    [
-      "Horse",
-      new Industry(
-        "Horse",
-        [new Demand(Resource.FOOD, (s) => s)],
-        [new Demand(Resource.HORSE, (s) => s)]
-      ),
-    ],
-    [
-      "Goods",
-      new Industry(
-        "Goods",
-        [
-          new Demand(Resource.COTTON, (s) => s),
-          new Demand(Resource.MACHINE, (s) => Math.max(0, s - 1)),
-        ],
-        [new Demand(Resource.GOODS, (s) => s + 1)]
-      ),
-    ],
-    [
-      "Blacksmith",
-      new Industry(
-        "Blacksmith",
-        [
-          new Demand(Resource.MACHINE, (s) => Math.max(0, s - 1)),
-          new Demand(Resource.METAL, (s) => s),
-        ],
-        [new Demand(Resource.TOOLS, (s) => s + 1)]
-      ),
-    ],
-    [
-      "Machinery",
-      new Industry(
-        "Machinery",
-        [
-          new Demand(Resource.TOOLS, (s) => Math.max(0, s - 1)),
-          new Demand(Resource.WOOD, (s) => s + 1),
-        ],
-        [new Demand(Resource.MACHINE, (s) => s)]
-      ),
-    ],
-  ]);
 }
 
 export class People {
@@ -294,34 +218,92 @@ export class People {
   constructor(
     public name: string,
     public stats: Map<string, number>,
-    public reputation: Map<number, number>,
+    public reputation: Map<number, number>, // reputation with factions
     public relations: Relation[],
-    public location: number
+    public location: number,
+    public goals: Goal[],
+    public currentAction: Action,
+    public projects: Project[],
+    public secrets: Secret[]
   ) {}
+
+  stat(name: string): number {
+    const s = this.stats.get(name);
+    return s !== undefined ? s : 0;
+  }
 }
 
-export class Relation {
-  constructor(
-    public to: number,
-    public mag: number,
-    public reason: string,
-    public description: string
-  ) {}
+/** Facts best kept hidden */
+export interface Secret {
+  isPublic: boolean;
+  // tell someone
+  revealTo(from: People, to: People): void;
+  // tell everyone
+  makePublic(world: World): void;
+}
+
+/** Long term projects */
+export interface Project {
+  owner: People;
+  forGoal: Goal;
+  totalSteps: number;
+  currentStep: number;
+  // impact when the project is finished
+  finished(world: World): void;
+}
+
+/** Actions done each week */
+export interface Action {
+  owner: People;
+  // an action impacts the world
+  resolve(world: World): void;
+}
+
+/** Goals and needs that drives the person */
+export interface Goal {
+  owner: People;
+  // need generated from the goal. If 0 the goal is satisfied
+  need: number;
+  // long term project for this goal
+  project: Project | undefined;
+  // check if the need from this goal must change
+  updateNeed(world: World): void;
+  // a goal guides what action the person can make, depending on the need
+  generateActions(world: World): [Action, number][];
+}
+
+/** Relations between persons */
+export interface Relation {
+  owner: People;
+  to: number;
+  mag: number;
+  reason: string;
+  description: string;
 }
 
 export class Faction {
   static nextFactionId = 0;
   public id = Faction.nextFactionId++;
+  public leaderSlots: number[];
+  public leaders: number[][] = [[], [], []];
   constructor(
     public name: string,
-    public reputation: Map<number, number>,
-    public wealth: number,
-    public members: number
-  ) {}
+    public reputation: Map<number, number>, // reputation between factions
+    public influence: number,
+    public tier: number
+  ) {
+    this.leaderSlots = [1, Math.floor(tier / 2) + 1, tier > 1 ? tier * 5 : 0];
+  }
+
+  reput(other: number): number {
+    const r = this.reputation.get(other);
+    return r !== undefined ? r : 0;
+  }
 }
 
-export class Position {
-  constructor(public x: number, public y: number) {}
+export interface Position {
+  x: number;
+  y: number;
 }
 
 export interface Message {

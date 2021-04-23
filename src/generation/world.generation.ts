@@ -107,7 +107,7 @@ export class WorldGen {
         const h = Math.floor(t * 255);
         return new Tile(
           this.getTileType(h, seaLevel, mountainLevel, temp, humid, x, y),
-          new Position(x, y),
+          {x, y},
           h
         );
       })
@@ -161,13 +161,13 @@ export class WorldGen {
             if (path && path.length > 0) {
               path.forEach((p) => (map[p.x][p.y].isSeaRoad = true));
               city.roads.push(
-                new Road(city.id, c.id, path.map(n => new Position(n.x, n.y)), path ? path[path.length - 1].g : -1)
+                new Road(city.id, c.id, path.map(n => ({x: n.x, y: n.y})), path ? path[path.length - 1].g : -1)
               );
               c.roads.push(
                 new Road(
                   c.id,
                   city.id,
-                  path.reverse().map(n => new Position(n.x, n.y)),
+                  path.reverse().map(n => ({x: n.x, y: n.y})),
                   path ? path[path.length - 1].g : -1
                 )
               );
@@ -181,9 +181,9 @@ export class WorldGen {
             );
             if (path && path.length > 0) {
               path.forEach((p) => (map[p.x][p.y].isRoad = true));
-              city.roads.push(new Road(city.id, c.id, path.map(n => new Position(n.x, n.y)), path[path.length - 1].g));
+              city.roads.push(new Road(city.id, c.id, path.map(n => ({x: n.x, y: n.y})), path[path.length - 1].g));
               c.roads.push(
-                new Road(c.id, city.id, path.reverse().map(n => new Position(n.x, n.y)), path[path.length - 1].g)
+                new Road(c.id, city.id, path.reverse().map(n => ({x: n.x, y: n.y})), path[path.length - 1].g)
               );
             }
           }
@@ -394,7 +394,7 @@ export class WorldGen {
   }
 
   getCitySpot(map: Tile[][], cities: City[]): Position {
-    const pos = new Position(0, 0);
+    const pos = {x: 0, y: 0};
     let maxScore = -10000;
     map.forEach((line, x) =>
       line.forEach((t, y) => {
