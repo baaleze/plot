@@ -107,7 +107,7 @@ export class WorldGen {
         const h = Math.floor(t * 255);
         return new Tile(
           this.getTileType(h, seaLevel, mountainLevel, temp, humid, x, y),
-          {x, y},
+          { x, y },
           h
         );
       })
@@ -131,7 +131,11 @@ export class WorldGen {
 
   buildRoads(world: World): void {
     // land route
-    this.buildRoadsRecursive(world.map, Array.from(world.cities.values()), false);
+    this.buildRoadsRecursive(
+      world.map,
+      Array.from(world.cities.values()),
+      false
+    );
     // sea route
     this.buildRoadsRecursive(
       world.map,
@@ -161,13 +165,18 @@ export class WorldGen {
             if (path && path.length > 0) {
               path.forEach((p) => (map[p.x][p.y].isSeaRoad = true));
               city.roads.push(
-                new Road(city.id, c.id, path.map(n => ({x: n.x, y: n.y})), path ? path[path.length - 1].g : -1)
+                new Road(
+                  city.id,
+                  c.id,
+                  path.map((n) => ({ x: n.x, y: n.y })),
+                  path ? path[path.length - 1].g : -1
+                )
               );
               c.roads.push(
                 new Road(
                   c.id,
                   city.id,
-                  path.reverse().map(n => ({x: n.x, y: n.y})),
+                  path.reverse().map((n) => ({ x: n.x, y: n.y })),
                   path ? path[path.length - 1].g : -1
                 )
               );
@@ -181,9 +190,21 @@ export class WorldGen {
             );
             if (path && path.length > 0) {
               path.forEach((p) => (map[p.x][p.y].isRoad = true));
-              city.roads.push(new Road(city.id, c.id, path.map(n => ({x: n.x, y: n.y})), path[path.length - 1].g));
+              city.roads.push(
+                new Road(
+                  city.id,
+                  c.id,
+                  path.map((n) => ({ x: n.x, y: n.y })),
+                  path[path.length - 1].g
+                )
+              );
               c.roads.push(
-                new Road(c.id, city.id, path.reverse().map(n => ({x: n.x, y: n.y})), path[path.length - 1].g)
+                new Road(
+                  c.id,
+                  city.id,
+                  path.reverse().map((n) => ({ x: n.x, y: n.y })),
+                  path[path.length - 1].g
+                )
               );
             }
           }
@@ -214,7 +235,7 @@ export class WorldGen {
       cities.push(this.createCityFromSpot(map, pos, "" + r));
     }
     // put them in the map
-    cities.forEach(c => world.cities.set(c.id, c));
+    cities.forEach((c) => world.cities.set(c.id, c));
   }
 
   createCityFromSpot(map: Tile[][], pos: Position, name: string): City {
@@ -326,9 +347,7 @@ export class WorldGen {
     world.cities.forEach((c) => {
       const nation = world.nations.get(c.nation)!;
       c.name = nation.lang.generateName("city")!;
-      c.rivers = c.rivers.map((r) =>
-        this.nameRiver(r, nation.lang, world.map)
-      );
+      c.rivers = c.rivers.map((r) => this.nameRiver(r, nation.lang, world.map));
     });
   }
 
@@ -394,7 +413,7 @@ export class WorldGen {
   }
 
   getCitySpot(map: Tile[][], cities: City[]): Position {
-    const pos = {x: 0, y: 0};
+    const pos = { x: 0, y: 0 };
     let maxScore = -10000;
     map.forEach((line, x) =>
       line.forEach((t, y) => {
@@ -554,7 +573,9 @@ export class WorldGen {
   }
 
   clean(world: World): void {
-    const toDelete = Array.from(world.cities.values()).filter(c => c.roads.length === 0);
-    toDelete.forEach(c => world.cities.delete(c.id));
+    const toDelete = Array.from(world.cities.values()).filter(
+      (c) => c.roads.length === 0
+    );
+    toDelete.forEach((c) => world.cities.delete(c.id));
   }
 }

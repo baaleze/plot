@@ -47,7 +47,7 @@ export class Utils {
           // bounds
           // get tile
           if (map[i][j].type === type && Utils.dist(x, y, i, j) < minDist) {
-            pos = {x: i, y: j};
+            pos = { x: i, y: j };
             minDist = Utils.dist(x, y, i, j);
           }
         }
@@ -120,7 +120,7 @@ export class Utils {
   }
 
   static copyPosition(pos: Position): Position {
-    return {x: pos.x, y: pos.y};
+    return { x: pos.x, y: pos.y };
   }
 
   static get2PowerAbove(x: number): number {
@@ -148,6 +148,15 @@ export class Utils {
       return false;
     } else {
       return Utils.randomIntBetween(0, 10) <= percent;
+    }
+  }
+
+  static addInMap<T>(map: Map<T, number>, key: T, value: number) {
+    const v = map.get(key);
+    if (v !== undefined) {
+      map.set(key, v + value);
+    } else {
+      map.set(key, value);
     }
   }
 }

@@ -1,19 +1,23 @@
 <template>
   <div v-if="city !== undefined && city.name !== ''">
     <h2>
-      <b>{{ city.name }}</b> of Nation {{ getNation(city.nation).name }} [{{ city.position.x }},{{
-        city.position.y
-      }}]</h2>
+      <b>{{ city.name }}</b> of Nation {{ getNation(city.nation).name }} [{{
+        city.position.x
+      }},{{ city.position.y }}]
+    </h2>
     <h3>
-      Population {{ city.population }} [{{ getMag() }}] (growth = {{ city.growth * 10 }}%)<br>
-      Access {{ city.access }} 
-      Stability {{ city.stability }}
+      Population {{ city.population }} [{{ getMag() }}] (growth =
+      {{ city.growth * 10 }}%)<br />
+      Access {{ city.access }} Stability {{ city.stability }}
       <span v-if="city.port">
         Has a port [{{ city.port.x }},{{ city.port.y }}]
       </span>
     </h3>
     <div>
-      Roads to <span v-for="r of city.roads" :key="r.id">{{ getCity(r.to).name }}//</span>
+      Roads to
+      <span v-for="r of city.roads" :key="r.id"
+        >{{ getCity(r.to).name }}//</span
+      >
     </div>
     <div v-if="city.industries">
       <div>
@@ -32,7 +36,12 @@
           <b-tr>
             <b-th>Resource</b-th>
             <b-th v-for="r of res" :key="r">
-              <img v-b-tooltip :title="getResourceName(r)" class="resource" :src="'/icons/'+getResourceName(r)+'.svg'" >
+              <img
+                v-b-tooltip
+                :title="getResourceName(r)"
+                class="resource"
+                :src="'/icons/' + getResourceName(r) + '.svg'"
+              />
             </b-th>
           </b-tr>
           <b-tr>
@@ -75,7 +84,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { allResources, City, Industry, IndustryName, Nation, Resource } from "@/game/model/models";
+import {
+  allResources,
+  City,
+  Industry,
+  IndustryName,
+  Nation,
+  Resource,
+} from "@/game/model/models";
 import { Utils } from "@/utils";
 import { GameData } from "@/game/gameData";
 @Component

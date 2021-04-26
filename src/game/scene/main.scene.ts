@@ -22,17 +22,19 @@ export class MainScene extends Scene {
 
   buildHeightMap(): void {
     // create a canvas
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = Config.WORLD_SIZE;
     canvas.height = Config.WORLD_SIZE;
-    const cx = canvas.getContext('2d');
+    const cx = canvas.getContext("2d");
     if (cx) {
-      this.gameData.worldInstance.map.forEach((col, x) => col.forEach((tile, y) => {
-        const grey = tile.altitude / 2 + 127;
-        cx.fillStyle = Utils.colorString([grey, grey, grey]);
-        cx.fillRect(x, y, 1, 1);
-      }));
-      this.textures.addCanvas('heightmap', canvas);
+      this.gameData.worldInstance.map.forEach((col, x) =>
+        col.forEach((tile, y) => {
+          const grey = tile.altitude / 2 + 127;
+          cx.fillStyle = Utils.colorString([grey, grey, grey]);
+          cx.fillRect(x, y, 1, 1);
+        })
+      );
+      this.textures.addCanvas("heightmap", canvas);
     }
   }
 
@@ -54,7 +56,11 @@ export class MainScene extends Scene {
       });
     });
     // add the heightmap
-    const heightMap = this.add.image(Config.WORLD_SIZE * Config.TILE_SIZE / 2,  Config.WORLD_SIZE * Config.TILE_SIZE / 2,'heightmap');
+    const heightMap = this.add.image(
+      (Config.WORLD_SIZE * Config.TILE_SIZE) / 2,
+      (Config.WORLD_SIZE * Config.TILE_SIZE) / 2,
+      "heightmap"
+    );
     heightMap.scale = Config.TILE_SIZE;
     heightMap.blendMode = BlendModes.MULTIPLY;
   }

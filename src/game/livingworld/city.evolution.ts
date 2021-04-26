@@ -6,6 +6,7 @@ import {
   Industry,
   TileType,
   Message,
+  ALL_INDUSTRIES,
 } from "@/game/model/models";
 import { Utils } from "@/utils";
 
@@ -13,9 +14,9 @@ const TICK_TIME = 1;
 
 export class CityEvolution {
   static tick(world: World): Message {
-    world.day = (world.day + TICK_TIME) % 70;
+    world.week = (world.week + TICK_TIME) % 70;
     // update cities every week
-    if (world.day === 0) {
+    if (world.week === 0) {
       CityEvolution.updateCities(world);
     }
 
@@ -52,7 +53,9 @@ export class CityEvolution {
       return undefined;
     } else {
       // pick random one
-      cityToTrade = Utils.randomInArray(Array.from(world.cities.keys()).filter(id => id !== city.id));
+      cityToTrade = Utils.randomInArray(
+        Array.from(world.cities.keys()).filter((id) => id !== city.id)
+      );
     }
 
     // LETS GOOOOOOO

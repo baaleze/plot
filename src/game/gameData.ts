@@ -1,5 +1,6 @@
 import { Config } from "@/constants/conf";
-import { WorldGen } from "@/generation/worldgen";
+import { PeopleGen } from "@/generation/people.generation";
+import { WorldGen } from "@/generation/world.generation";
 import { World } from "./model/models";
 
 export class GameData {
@@ -20,6 +21,7 @@ export class GameData {
       worldSize: Config.WORLD_SIZE,
       nbNations: 4,
     });
+    PeopleGen.generateFirstPeople(world);
     this.worldInstance = world;
   }
 }
